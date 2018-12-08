@@ -1,6 +1,7 @@
 .App {
-  text-align: center;
+  /* background-color:#c9c9c9; */
 }
+
 
 .App-logo {
   animation: App-logo-spin infinite 20s linear;
@@ -22,6 +23,90 @@
   color: #61dafb;
 }
 
+.array-fare{
+  display:block;
+}
+.react-datepicker-wrapper,
+.react-datepicker__input-container{
+  display:block !important;
+  width:100% !important;
+}
+.detailsForm label{
+  margin-top:10px;
+  margin-bottom:-3px !important;
+  font-size:10px !important;
+}
+input{
+  width:100% !important;
+}
+.row{
+  margin-left:0px !important;
+  margin-right:0px !important;
+}
+
+table thead tr th{
+  text-align: center !important;
+}
+.remove-padding{
+  padding-left:0px !important;
+  padding-right:0px !important;
+}
+
+h6.proposed-headline{
+  margin-top:34px;
+}
+
+.information-headline{
+  padding:0 15px;
+}
+.form-row.sale-information{
+  background-color:#e9e4e4;
+}
+
+.form-row.blackout-information{
+  background-color:#d2d2d2;
+  padding-top:10px;
+}
+
+.black-color{
+  color:#464545 !important
+}
+.individual-blackout{
+  border:1px solid #ffffff;
+  margin-top:5px;
+  padding-bottom:15px;
+}
+.individual-exception{
+  border-bottom:1px solid #ffffff;
+}
+
+.exception-numbering{
+  position:absolute;
+  left:-3px;
+  top:40px;
+  font-size:12px;
+  font-weight:bold;
+}
+
+.add-btn{
+  margin-top:23px;
+}
+.btn.btn-success.add-exception{
+  padding:2px 5px;
+  background-color:#38a6da;
+  border-color: #38a6da;
+}
+.btn.remove-exception{
+  height:30px;
+  padding:0px 8px;
+  background-color:#a70606;
+  border-color:#a70606;
+  margin-top:33px;
+}
+.form-group{
+  margin-bottom: 10px;
+}
+
 @keyframes App-logo-spin {
   from {
     transform: rotate(0deg);
@@ -29,4 +114,57 @@
   to {
     transform: rotate(360deg);
   }
+}
+
+
+/* .form-group-input {
+  padding: 1em;
+  margin: 1em;
+} */
+
+/* input[type=file] {
+  outline: 0;
+  opacity: 0;
+  pointer-events: none;
+  user-select: none;
+} */
+
+/* .form-group-input .label {
+  width: 100%;
+  border: 1px dashed #898787;
+  border-radius: 2px;
+  display: block;
+  padding: 0em;
+  transition: border 300ms ease;
+  cursor: pointer;
+  text-align: center;
+}
+.form-group-input .label i {
+  display: inline-block;
+  font-size: 25px;
+  padding-top: 10px;
+}
+.form-group-input .label i{
+  color: #898787;
+  transition: 200ms color;
+  font-size:35px;
+}
+.form-group-input .label .title {
+  color: #898787;
+  transition: 200ms color;
+  font-size:25px;
+  position: absolute;
+  margin-top:16px;
+}
+.form-group-input .label:hover {
+  border: 1px solid #898787;
+}
+.form-group-input .label:hover i,
+.form-group-input .label:hover .title {
+  color: #585656;
+} */
+
+#inputFile{
+  margin-top:10px;
+  padding:5px 10px;
 }

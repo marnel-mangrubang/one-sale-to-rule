@@ -3,9 +3,19 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "excel": "^1.0.0",
+    "moment": "^2.22.2",
     "react": "^16.6.3",
+    "react-datepicker": "^2.0.0",
     "react-dom": "^16.6.3",
-    "react-scripts": "2.1.1"
+    "react-form": "^3.5.6",
+    "react-html-parser": "^2.0.2",
+    "react-scripts": "2.1.1",
+    "read-excel-file": "^2.0.6",
+    "simple-react-form": "^2.2.1",
+    "xlsx": "^0.14.1",
+    "xml-writer": "^1.7.0",
+    "xmlbuilder": "^10.1.1"
   },
   "scripts": {
     "start": "react-scripts start",
