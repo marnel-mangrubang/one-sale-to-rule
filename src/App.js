@@ -2,13 +2,11 @@ import React, { Component } from 'react';
 import './App.css';
 import readXlsxFile from 'read-excel-file';
 import builder from 'xmlbuilder';
-import XMLWriter from 'xml-writer';
-import ReactHtmlParser from 'react-html-parser';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, verifyMyAirportCode, mergeObjects, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay } from './Helper/Helper';
+import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, mergeObjects, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay, groupMeByOrigin } from './Helper/Helper';
 
 
 class App extends Component {
@@ -231,7 +229,7 @@ class App extends Component {
       sale_start_date_string: temp_string
     }, () => console.log(this.state));
 
-    console.log(verifyMyAirportCode("SJC"));
+    //console.log(verifyMyAirportCode("SJC"));
 
     //console.log("Sale Start Date: "+this.state.sale_start_date);
     // console.log("Sale Start Date String: "+this.state.sale_start_date_string);
@@ -504,17 +502,66 @@ class App extends Component {
 
     console.log()
 
-    let saleStart = this.state.sale_start_date;
+    //let saleStart = this.state.sale_start_date;
 
     var doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
     .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
     doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by Marnel');
-    this.state.default_markets.map((mydef) => {
-      let concat_defaults = mydef
-    });
+    // this.state.default_markets.map((mydef) => {
+    //   let concat_defaults = mydef
+    // });
 
     //Test whether the passed array is combined and with exceptions
     if(exception_test === false){
+
+      what_combined_fares_to_make_xml_for.map((item) => {
+
+        let travel_start_calendar = '';
+        let travel_end_calendar = '';
+
+        if(item["group"] === "ALASKA_HAWAII"){
+          travel_start_calendar = this.state.travel_start_alaska_to_from_hawaii_string;
+          travel_end_calendar = this.state.travel_end_alaska_to_from_hawaii_string;
+        }else{
+
+        }
+
+        //console.log(item);
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
+        var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
+          .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
+          .ele('DealTitle').up()
+          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .up()
+          var fares_layer = deal_set.ele('Fares');
+          item["price_types"].map((item2) => {
+            if(item["default"]===true && item2['fare_type'] === "Saver"){
+              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }else{
+              fares_layer.ele('Row', {'fareType': item2['fare_type']})
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }
+          });
+
+
+
+
+
+
+      });
+
+    }else{
 
       what_combined_fares_to_make_xml_for.map((item) => {
         //console.log(item);
@@ -526,7 +573,7 @@ class App extends Component {
           .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
           .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
           .up()
-          var fares_layer = deal_set.ele('Fares')
+          var fares_layer = deal_set.ele('Fares');
           item["price_types"].map((item2) => {
             if(item["default"]===true && item2['fare_type'] === "Saver"){
               fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
@@ -546,65 +593,32 @@ class App extends Component {
           });
       });
 
-    }else{
-
-      what_combined_fares_to_make_xml_for.map((item_with_excep) => {
+      what_exception_fares_to_make_xml_for.map((item) => {
         //console.log(item);
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item_with_excep["name"]);
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]+' - EXCEPTION');
         var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item_with_excep["name"], 'dealType':'Saver', 'url':''})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
           .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
           .ele('DealTitle').up()
           .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item_with_excep["origin_city"]+' ('+item_with_excep["origin_code"]+') to '+item_with_excep["destination_city"]+' ('+item_with_excep["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
           .up()
-          var fares_layer = deal_set.ele('Fares')
-          item_with_excep["price_types"].map((item2) => {
-            if(item_with_excep["default"]===true && item2['fare_type'] === "Saver"){
+          var fares_layer = deal_set.ele('Fares');
+          item["price_types"].map((item2) => {
+            if(item["default"]===true && item2['fare_type'] === "Saver"){
               fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-              .ele('Cell','<Data>'+item_with_excep["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item_with_excep["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
               .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
             }else{
               fares_layer.ele('Row', {'fareType': item2['fare_type']})
-              .ele('Cell','<Data>'+item_with_excep["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item_with_excep["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
               .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }
-          });
-      });
-
-      what_exception_fares_to_make_xml_for.map((item_excep) => {
-        //console.log(item);
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item_excep["name"]+' - EXCEPTION');
-        var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item_excep["name"], 'dealType':'Saver', 'url':''})
-          .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
-          .ele('DealTitle').up()
-          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item_excep["origin_city"]+' ('+item_excep["origin_code"]+') to '+item_excep["destination_city"]+' ('+item_excep["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-          .up()
-          .up()
-          var fares_layer = deal_set.ele('Fares')
-          item_excep["price_types"].map((item2_excep) => {
-            if(item_excep["default"]===true && item2_excep['fare_type'] === "Saver"){
-              fares_layer.ele('Row', {'fareType': item2_excep['fare_type'], 'showAsDefault' : 'true'})
-              .ele('Cell','<Data>'+item_excep["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_excep["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item_excep["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_excep["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2_excep["price"]+'</Data>').up()
-            }else{
-              fares_layer.ele('Row', {'fareType': item2_excep['fare_type']})
-              .ele('Cell','<Data>'+item_excep["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_excep["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item_excep["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item_excep["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2_excep["price"]+'</Data>').up()
             }
           });
       });
@@ -707,24 +721,9 @@ class App extends Component {
     e.preventDefault();
 
     this.verifyThatExceptionsIsNotEmpty();
-    // this.moveExceptionsOut();
-    
-
-
-
+  
   }
 
-  // removeExceptionFromAllFares(){
-  //   // this.setState({ 
-  //   //   exceptions: this.state.exceptions.filter((s, sidx) => idx !== sidx) 
-  //   // });
-  //   var array = [...this.state.all_my_fares]; // make a separate copy of the array
-  //   var index = array.indexOf(e.target.value)
-  //   if (index !== -1) {
-  //     array.splice(index, 1);
-  //     this.setState({people: array});
-  //   }
-  // }
 
 
   onFileChange(e, file) {
@@ -815,11 +814,35 @@ class App extends Component {
         if (typeof data[i] != 'undefined' && data[i] != null) {
           //Checks that the values in index 0 and 2 are airport codes for every row in the spreadsheet
           if(typeof data[i][0] == 'string' && (data[i][0].length === 3 && data[i][2].length === 3)){
+
+            let mygroup = "";
+            if( (groupMeByOrigin(data[i][0]) === "ALASKA" && groupMeByOrigin(data[i][2]) === "HAWAII") || (groupMeByOrigin(data[i][0]) === "HAWAII" && groupMeByOrigin(data[i][2]) === "ALASKA") ){
+                mygroup = "ALASKA_HAWAII";
+            }else if(groupMeByOrigin(data[i][0]) === "HAWAII" || groupMeByOrigin(data[i][2]) === "HAWAII"){
+                mygroup = "HAWAII";
+            }else if(groupMeByOrigin(data[i][0]) === "MEXICO" || groupMeByOrigin(data[i][0]) === "COSTA_RICA"){
+                console.log("THERE SHOULD NOT BE FARES THAT ORIGINATE FROM MEXICO OR COSTA RICA!");
+            }else if(groupMeByOrigin(data[i][2]) === "MEXICO"){
+                mygroup = "MEXICO";
+            }else if(groupMeByOrigin(data[i][2]) === "COSTA_RICA"){
+              mygroup = "COSTA_RICA";
+            }else if(groupMeByOrigin(data[i][0]) === "FLORIDA"){
+              mygroup = "FROM_FLORIDA";
+            }else if(groupMeByOrigin(data[i][2]) === "FLORIDA"){
+              mygroup = "TO_FLORIDA";
+            }else if(groupMeByOrigin(data[i][2]) === "OTHER_MARKET"){
+              mygroup = "OTHER_MARKET";
+            }else{
+              console.log("NO GROUP WAS FOUND FOR " +data[i][0]+data[i][2]);
+            }
+
+
             //console.log(data[i]);
             var newArray = this.state.all_my_fares.slice(); 
             newArray.push({
               id: i,
               name: data[i][0]+data[i][2],
+              group: mygroup,
               default: false,
               origin_code:data[i][0],
               origin_city:data[i][1],
@@ -828,7 +851,10 @@ class App extends Component {
               price:data[i][4],
               fare_type:data[i][5],
             });   
-            this.setState({all_my_fares:newArray})
+            this.setState({
+              all_my_fares:newArray
+            });
+
 
           } 
         }
@@ -941,7 +967,7 @@ class App extends Component {
 
   resetOutputVariable = () => () => {
 
-    var newArray = this.state.xmloutput.slice(); 
+   // var newArray = this.state.xmloutput.slice(); 
     this.setState({
       xmloutput:''
     }, () => console.log(this.state));
@@ -963,8 +989,13 @@ class App extends Component {
 
             <div className="form-row sale-information">
                 <div className="row col-md-12">
-                    <div className="form-group col-md-6">
+                    <div className="form-group col-md-3">
                       <h3 className="information-headline">Sale Information:</h3>
+                    </div>
+                    <div className="form-group col-md-3">
+                      <a href="TEMPLATE.xlsx" download className="btn btn-success download-template">
+                          <i className="fa fa-download"></i> Download Template
+                      </a>
                     </div>
                     <div className="form-group col-md-6">
                       <input type="file" className="form-control" id="inputFile" onChange={this.onFileChange} />

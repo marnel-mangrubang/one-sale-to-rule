@@ -37,139 +37,6 @@ export function compareDestinationCode(a, b) {
     return comparison;
 }
 
-export function verifyMyAirportCode(code) {
-    return {
-        "ABQ":"ABQ",
-        "ACV":"ACV",
-        "ADK":"ADK",
-        "ADQ":"ADQ",
-        "AKN":"AKN",
-        "ALW":"ALW",
-        "ANC":"ANC",
-        "ATL":"ATL",
-        "AUS":"AUS",
-        "BET":"BET",
-        "BIL":"BIL",
-        "BLI":"BLI",
-        "BNA":"BNA",
-        "BOI":"BOI",
-        "BOS":"BOS",
-        "BRW":"BRW",
-        "BUR":"BUR",
-        "BWI":"BWI",
-        "BZN":"BZN",
-        "CDV":"CDV",
-        "CHS":"CHS",
-        "COS":"COS",
-        "CUN":"CUN",
-        "DAL":"DAL",
-        "DCA":"DCA",
-        "DEN":"DEN",
-        "DFW":"DFW",
-        "DLG":"DLG",
-        "DTW":"DTW",
-        "DUT":"DUT",
-        "EAT":"EAT",
-        "EUG":"EUG",
-        "EWR":"EWR",
-        "FAI":"FAI",
-        "FAT":"FAT",
-        "FCA":"FCA",
-        "FLG":"FLG",
-        "FLL":"FLL",
-        "GDL":"GDL",
-        "GEG":"GEG",
-        "GST":"GST",
-        "GTF":"GTF",
-        "GUC":"GUC",
-        "HAV":"HAV",
-        "HDN":"HDN",
-        "HLN":"HLN",
-        "HNL":"HNL",
-        "IAD":"IAD",
-        "IAH":"IAH",
-        "ICT":"ICT",
-        "IDA":"IDA",
-        "IND":"IND",
-        "JFK":"JFK",
-        "JNU":"JNU",
-        "KOA":"KOA",
-        "KTN":"KTN",
-        "LAP":"LAP",
-        "LAS":"LAS",
-        "LAX":"LAX",
-        "LGA":"LGA",
-        "LGB":"LGB",
-        "LIH":"LIH",
-        "LIR":"LIR",
-        "LTO":"LTO",
-        "LWS":"LWS",
-        "MCI":"MCI",
-        "MCO":"MCO",
-        "MEX":"MEX",
-        "MFR":"MFR",
-        "MIA":"MIA",
-        "MKE":"MKE",
-        "MMH":"MMH",
-        "MRY":"MRY",
-        "MSO":"MSO",
-        "MSP":"MSP",
-        "MSY":"MSY",
-        "MZT":"MZT",
-        "OAK":"OAK",
-        "OGG":"OGG",
-        "OKC":"OKC",
-        "OMA":"OMA",
-        "OME":"OME",
-        "ONT":"ONT",
-        "ORD":"ORD",
-        "OTZ":"OTZ",
-        "PAE":"PAE",
-        "PDX":"PDX",
-        "PHL":"PHL",
-        "PHX":"PHX",
-        "PIT":"PIT",
-        "PRC":"PRC",
-        "PSC":"PSC",
-        "PSG":"PSG",
-        "PSP":"PSP",
-        "PUW":"PUW",
-        "PVR":"PVR",
-        "RDD":"RDD",
-        "RDM":"RDM",
-        "RDU":"RDU",
-        "RNO":"RNO",
-        "SAN":"SAN",
-        "SAT":"SAT",
-        "SBA":"SBA",
-        "SBP":"SBP",
-        "SCC":"SCC",
-        "SEA":"SEA",
-        "SFO":"SFO",
-        "SIT":"SIT",
-        "SJC":"SJC",
-        "SJD":"SJD",
-        "SJO":"SJO",
-        "SLC":"SLC",
-        "SMF":"SMF",
-        "SNA":"SNA",
-        "STL":"STL",
-        "STS":"STS",
-        "SUN":"SUN",
-        "TPA":"TPA",
-        "TUS":"TUS",
-        "WRG":"WRG",
-        "YAK":"YAK",
-        "YEG":"YEG",
-        "YKM":"YKM",
-        "YLW":"YLW",
-        "YVR":"YVR",
-        "YYC":"YYC",
-        "YYJ":"YYJ",
-        "ZIH":"ZIH",
-        "ZLO":"ZLO",
-        }[code]
-}
 
 
 export function returnMyCityName(code) {
@@ -318,7 +185,7 @@ export function mergeObjects(arr) {
 
   for(var item in arr){
     var itemIndex = urls.indexOf(arr[item].name);
-    if(itemIndex == -1){
+    if(itemIndex === -1){
       urls.push(arr[item].name);
       var obj = {};
       obj.name = arr[item].name;
@@ -327,6 +194,7 @@ export function mergeObjects(arr) {
       obj.destination_code = arr[item].destination_code;
       obj.destination_city = arr[item].destination_city;
       obj.default = arr[item].default;
+      obj.group = arr[item].group;
 
       obj.price_types = [];
       var variationData = {};
@@ -343,7 +211,7 @@ export function mergeObjects(arr) {
       resultArray.push(obj);
 
     }else{
-      var variationData = {};
+      variationData = {};
       variationData.id = arr[item].id;
       if(arr[item].fare_type !== undefined){
         variationData.fare_type = arr[item].fare_type;
@@ -410,4 +278,26 @@ export function getMyTimeOfDay(date_passed) {
     } 
 }
 
+
+export function groupMeByOrigin(code) {
+    let alaska_only_codes = ["ADK","ANC","BRW","BET","CDV","DLG","DUT","FAI","GST","JNU","KTN","AKN","ADQ","OTZ","OME","PSG","SCC","SIT","WRG","YAK"];
+    let hawaii_only_codes = ["OGG","LIH","KOA","HNL"];
+    let florida_only_codes = ["FLL","MCO","MIA","TPA"];
+    let mexico_only_codes = ["MEX","CUN","GDL","LTO","SJD","ZLO","MZT","PVR","ZIH"];
+    let costa_rica_only_codes = ["LIR","SJO","HAV"];
+
+    if(alaska_only_codes.indexOf(code) > -1){
+        return "ALASKA";
+    }else if(hawaii_only_codes.indexOf(code) > -1){
+        return "HAWAII";
+    }else if(florida_only_codes.indexOf(code) > -1){
+        return "FLORIDA";
+    }else if(mexico_only_codes.indexOf(code) > -1){
+        return "MEXICO";
+    }else if(costa_rica_only_codes.indexOf(code) > -1){
+        return "COSTA_RICA";
+    }else{
+        return "OTHER_MARKET";
+    }
+}
   

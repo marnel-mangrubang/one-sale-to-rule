@@ -4,7 +4,13 @@
 /node_modules
 /.pnp
 .pnp.js
-*.xlsx
+201811211 - HI CALIF - with saver.xlsx
+Book1.xlsx
+Copy of 201811211 - HI CALIF - with saver.xlsx
+NEW-TEMPLATE.xlsx
+SAVER-TEMPLATE.xlsx
+src/TEMPLATE.xlsx
+public/TEMPLATE.xlsx
 test.xml
 # testing
 /coverage

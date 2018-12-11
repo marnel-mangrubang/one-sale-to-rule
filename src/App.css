@@ -98,6 +98,13 @@ h6.proposed-headline{
   box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
   /* color:#6d6b6b; */
 }
+.btn.btn-success.download-template{
+  padding:2px 5px;
+  background-color:#5819ea;
+  border-color: #5819ea;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
+  margin-top:15px;
+}
 .btn.remove-exception{
   height:30px;
   padding:0px 8px;
