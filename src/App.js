@@ -7,8 +7,8 @@ import ReactHtmlParser from 'react-html-parser';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
-// import Exceptions from './Exceptions'
-import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, verifyMyAirportCode } from './Helper/Helper';
+import {CopyToClipboard} from 'react-copy-to-clipboard';
+import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, verifyMyAirportCode, mergeObjects, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay } from './Helper/Helper';
 
 
 class App extends Component {
@@ -24,7 +24,11 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      xmloutput: '',
+      copied: false,
       all_my_fares: [],
+      default_markets: [],
+      combined_saver_and_main: [],
       exceptions: [{ code_origin: '', code_destination: '', travel_valid: '', service_begins: null, service_ends: null, begins_string:'', ends_string:'' }],
       pulled_exception_fares:[],
       firstinput: 'Initial data...',
@@ -108,6 +112,8 @@ class App extends Component {
     }
     
     this.onFileChange = this.onFileChange.bind(this);
+    this.saveDefaultMarkets = this.saveDefaultMarkets.bind(this);
+
     this.updateFirstInput = this.updateFirstInput.bind(this);
 
     this.createSaleDetails = this.createSaleDetails.bind(this);
@@ -165,6 +171,55 @@ class App extends Component {
 
   updateFirstInput(e) {
     this.setState({firstinput: e.target.value});
+  }
+
+  markAsDefault(def_market){
+
+    var array_all_combined_prices = [...this.state.combined_saver_and_main];
+
+    this.state.combined_saver_and_main.some((item) => {
+      if(def_market === item.name && item.default !== true){
+        // if(item.default === false){
+          var index = array_all_combined_prices.indexOf(item);
+          console.log(index + " " + item.name);
+          if (index !== -1) {
+            item['default'] = true;
+          }
+        // }
+      }
+    }, () => console.log(this.state));
+
+  }
+  
+
+
+  saveDefaultMarkets(e) {
+    
+    let temp_val = e.target.value;
+    temp_val = temp_val.split('\n');
+
+    const new_defaults = temp_val.map((item) => {
+
+      let split_market_and_price = item.replace(/\s/g,'');
+      split_market_and_price = split_market_and_price.match(/.{1,6}/g);
+      return { 
+        default_market: split_market_and_price[0],
+        default_price: split_market_and_price[1]
+      };
+
+
+    });
+
+    //Loop through default markets array and pass each code pair to markAsDefault function to make each default fare a default market
+    new_defaults.map((myobj) => {
+      this.markAsDefault(myobj['default_market']);
+    });
+
+    this.setState({
+      default_markets: new_defaults
+    },() => console.log(this.state));
+
+    
   }
 
 
@@ -441,107 +496,222 @@ class App extends Component {
 
 
 
-  createMyXml(){
+  createMyXml(combined_array, exceptions_array, exception_test){
     //console.log(origincode,origincity,destinationcode,destinationcity,price,mydealtype);
     //var pulled_fares = this.state.pulled_exception_fares.slice();
+    var what_combined_fares_to_make_xml_for = combined_array;
+    var what_exception_fares_to_make_xml_for = exceptions_array;
 
-    // var root = builder.create('FlightDeals', { encoding: 'UTF-8'})
-    // .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-  //   .ele('DealSet', {'from':'2018-12-03T17:30:01', 'to':'2018-12-05T23:59:59'})
-  //   .ele('DealInfo', {'code': '20181204_SALE-MCOSAN', 'dealType':'Saver', 'url':''})
-  //     .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
-  //     .ele('DealTitle').up()
-  //     .ele('DealDescrip', '<![CDATA[Purchase by December 5, 2018.]]>').up()
-  //     .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on December 5, 2018, and at least 21 days prior to departure. Travel from Orlando(MCO) to San Diego(SAN) is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-  // .up()
-  // .ele('Fares')
-  //   .ele('Row', {'fareType':'Saver'})
-  //     .ele('Cell','<Data>MCO</Data>').up()
-  //     .ele('Cell','<Data>Orlando</Data>').up()
-  //     .ele('Cell','<Data>SAN</Data>').up()
-  //     .ele('Cell','<Data>San Diego</Data>').up()
-  //     .ele('Cell','<Data>129</Data>').up()
+    console.log()
 
-  // .end({ pretty: true});
+    let saleStart = this.state.sale_start_date;
 
-  //console.log(root);
-    //let xw = new XMLWriter;
-    let xw = new XMLWriter();
-    xw.startDocument();
-    xw.startElement('root');
-    xw.writeAttribute('foo', 'value');
-    xw.text('Some content');
-    xw.endDocument();
+    var doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
+    .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
+    doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by Marnel');
+    this.state.default_markets.map((mydef) => {
+      let concat_defaults = mydef
+    });
+
+    //Test whether the passed array is combined and with exceptions
+    if(exception_test === false){
+
+      what_combined_fares_to_make_xml_for.map((item) => {
+        //console.log(item);
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
+        var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
+          .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
+          .ele('DealTitle').up()
+          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .up()
+          var fares_layer = deal_set.ele('Fares')
+          item["price_types"].map((item2) => {
+            if(item["default"]===true && item2['fare_type'] === "Saver"){
+              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }else{
+              fares_layer.ele('Row', {'fareType': item2['fare_type']})
+              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }
+          });
+      });
+
+    }else{
+
+      what_combined_fares_to_make_xml_for.map((item_with_excep) => {
+        //console.log(item);
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item_with_excep["name"]);
+        var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item_with_excep["name"], 'dealType':'Saver', 'url':''})
+          .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
+          .ele('DealTitle').up()
+          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item_with_excep["origin_city"]+' ('+item_with_excep["origin_code"]+') to '+item_with_excep["destination_city"]+' ('+item_with_excep["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .up()
+          var fares_layer = deal_set.ele('Fares')
+          item_with_excep["price_types"].map((item2) => {
+            if(item_with_excep["default"]===true && item2['fare_type'] === "Saver"){
+              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+              .ele('Cell','<Data>'+item_with_excep["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item_with_excep["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }else{
+              fares_layer.ele('Row', {'fareType': item2['fare_type']})
+              .ele('Cell','<Data>'+item_with_excep["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item_with_excep["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_with_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+            }
+          });
+      });
+
+      what_exception_fares_to_make_xml_for.map((item_excep) => {
+        //console.log(item);
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item_excep["name"]+' - EXCEPTION');
+        var deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item_excep["name"], 'dealType':'Saver', 'url':''})
+          .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
+          .ele('DealTitle').up()
+          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', 2018.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item_excep["origin_city"]+' ('+item_excep["origin_code"]+') to '+item_excep["destination_city"]+' ('+item_excep["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .up()
+          .up()
+          var fares_layer = deal_set.ele('Fares')
+          item_excep["price_types"].map((item2_excep) => {
+            if(item_excep["default"]===true && item2_excep['fare_type'] === "Saver"){
+              fares_layer.ele('Row', {'fareType': item2_excep['fare_type'], 'showAsDefault' : 'true'})
+              .ele('Cell','<Data>'+item_excep["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_excep["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item_excep["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2_excep["price"]+'</Data>').up()
+            }else{
+              fares_layer.ele('Row', {'fareType': item2_excep['fare_type']})
+              .ele('Cell','<Data>'+item_excep["origin_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_excep["origin_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item_excep["destination_code"]+'</Data>').up()
+              .ele('Cell','<Data>'+returnMyCityName(item_excep["destination_code"])+'</Data>').up()
+              .ele('Cell','<Data>'+item2_excep["price"]+'</Data>').up()
+            }
+          });
+      });
+
+
+    }
+
  
-    console.log(xw.toString());
+    let element = doc.toString({pretty: true});
+    element = element.replace(/&lt;/g, '<');
+    element = element.replace(/&gt;/g, '>');
 
-    // this.state.pulled_exception_fares.map((item) => {
-    //   //console.log(item);
-    //   root.ele('DealSet', {'from':'2018-12-03T17:30:01', 'to':'2018-12-05T23:59:59'})
-    //   .ele('DealInfo', {'code': '20181204_SALE-MCOSAN', 'dealType':'Saver', 'url':''})
-    //     .ele('TravelDates', {'startdate':'2019-01-08T00:00:01', 'enddate':'2019-01-15T23:59:59'}).up()
-    //     .ele('DealTitle').up()
-    //     .ele('DealDescrip', '<![CDATA[Purchase by December 5, 2018.]]>').up()
-    //     .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on December 5, 2018, and at least 21 days prior to departure. Travel from ('+item["origin_code"]+') to ('+item["destination_code"]+') is valid Thursday through Monday from January 8, 2019 - March 6, 2019. Blackout dates are from February 14, 2019 to February 25, 2019. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-    //   .up()
-    //   .ele('Fares')
-    //     .ele('Row', {'fareType':'Saver'})
-    //     .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-    //     .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-    //     .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-    //     .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-    //     .ele('Cell','<Data>'+item["price"]+'</Data>').up()
-    //     .ele('Cell','<Data>'+item["fare_type"]+'</Data>').up()
-    //   .end({ pretty: true});
-    // });
+    this.setState({
+      xmloutput: element
+    }, () => console.log(this.state));
 
- 
-
-    // console.log(root);
-
-
-
-    
-    
 
   }
 
 
+
+  moveExceptionsOut(){
+
+    var newPulledExceptionFares = this.state.pulled_exception_fares.slice();
+    var array_all_combined_prices = [...this.state.combined_saver_and_main];
+    var newAllMyFares = this.state.combined_saver_and_main.slice();
+    var newAllMyExceptions = this.state.exceptions.slice(); 
+
+
+    console.log(this.state.exceptions.length);
+
+    if(this.state.exceptions.length <= 0){
+      this.createMyXml(this.state.combined_saver_and_main, null, false);
+    }else{
+
+      newAllMyFares.map((item1, index1) => {
+        newAllMyExceptions.map((item2, index2) => {
+
+          if(item1["origin_code"] === item2["code_origin"] && item1["destination_code"] === item2["code_destination"]){
+            
+            var index = array_all_combined_prices.indexOf(item1);
+
+            if (index !== -1) {
+              //Removes this fare from all_my_fares
+              array_all_combined_prices.splice(index, 1);
+            
+              newPulledExceptionFares.push(item1);
+
+              this.setState({
+                combined_saver_and_main: array_all_combined_prices,
+                pulled_exception_fares: newPulledExceptionFares
+              }, () => this.createMyXml(this.state.combined_saver_and_main, this.state.pulled_exception_fares, true));
+
+
+
+              this.createMyXml(this.state.combined_saver_and_main, this.state.pulled_exception_fares, true);
+          
+              console.log("Fare Removed from Index: "+index1);
+            }
+
+          }
+        });
+      });
+
+    }
+
+
+  }
+
+
+  verifyThatExceptionsIsNotEmpty(){
+
+    var newAllMyExceptions = this.state.exceptions.slice(); 
+    var array_all_exceptions = [...this.state.exceptions];
+
+    //console.log(newAllMyExceptions[0]);
+
+    newAllMyExceptions.map((theitem, myindex) => {
+      if(theitem["code_origin"] === ""){
+        //if (myindex !== -1) {
+          array_all_exceptions.splice(myindex, 1);
+
+          this.setState({
+            exceptions: array_all_exceptions
+          }, () => this.moveExceptionsOut());
+        //}
+      }else{
+        this.moveExceptionsOut();
+      }
+    });
+
+
+  }
   
+
+
 
   //FORM BUTTON CLICK HANDLER
   createSaleDetails(e){
     e.preventDefault();
-    var newAllMyExceptions = this.state.exceptions.slice(); 
-    var newPulledExceptionFares = this.state.pulled_exception_fares.slice();
-    //var array_pulledfares = [...this.state.pulled_exception_fares];
 
-    var newAllMyFares = this.state.all_my_fares.slice();
-    var array_allfares = [...this.state.all_my_fares];
-
-    newAllMyFares.map((item1, index1) => {
-      newAllMyExceptions.map((item2, index2) => {
-        //console.log(item["origin_code"]);
-        if(item1["origin_code"] === item2["code_origin"] && item1["destination_code"] === item2["code_destination"]){
-          
-          var index = array_allfares.indexOf(item1)
-          if (index !== -1) {
-            array_allfares.splice(index, 1);
-            newPulledExceptionFares.push(item1);
-
-            this.setState({
-              all_my_fares: array_allfares,
-              pulled_exception_fares: newPulledExceptionFares
-            }, () => this.createMyXml());
-            console.log("Fare Removed from Index: "+index1);
-          }
-        }
-      });
-    });
-
-    //this.createMyXml();
-
+    this.verifyThatExceptionsIsNotEmpty();
+    // this.moveExceptionsOut();
     
+
+
+
   }
 
   // removeExceptionFromAllFares(){
@@ -648,6 +818,9 @@ class App extends Component {
             //console.log(data[i]);
             var newArray = this.state.all_my_fares.slice(); 
             newArray.push({
+              id: i,
+              name: data[i][0]+data[i][2],
+              default: false,
               origin_code:data[i][0],
               origin_city:data[i][1],
               destination_code:data[i][2],
@@ -666,9 +839,20 @@ class App extends Component {
       temp_arr.sort(compareOriginCode); //SORT by Origin Code second for alphabetical
       temp_arr.sort(comparePrice); //SORT by Price last for lowest to highest fares
 
+
       this.setState({
         all_my_fares:temp_arr
       }, () => console.log(this.state));
+
+
+      var temp_combined = this.state.combined_saver_and_main.slice();
+      temp_combined = mergeObjects(this.state.all_my_fares);
+
+      this.setState({
+        combined_saver_and_main: temp_combined
+      }, () => console.log(this.state));
+
+     // console.log(mergeObjects(this.state.all_my_fares));
     })//end of readXlsxFile for Sheet 4
 
   }
@@ -753,6 +937,16 @@ class App extends Component {
       exceptions: this.state.exceptions.filter((s, sidx) => idx !== sidx) 
     });
   }
+
+
+  resetOutputVariable = () => () => {
+
+    var newArray = this.state.xmloutput.slice(); 
+    this.setState({
+      xmloutput:''
+    }, () => console.log(this.state));
+
+  }
   
 
 
@@ -803,10 +997,17 @@ class App extends Component {
                     </div>
 
         
-                    {/* This row is for Proposed Hawaii Dates */}
+                    
                     <div className="row col-md-12">
-                      <div className="col-md-12 remove-padding">
-                        <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Hawaii</h6>
+
+                      <div className="form-group text-area-div">
+                        
+                        <label htmlFor="default_markets"><strong>Default Markets:</strong></label>
+                        <textarea className="form-control rounded-0" id="default_markets" rows="11" onChange={this.saveDefaultMarkets} ></textarea>
+                      </div>
+
+                      {/* <div className="col-md-12 remove-padding">
+                         <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Hawaii</h6>
                       </div>
                       
                       <div className="col-md-5 remove-padding">
@@ -819,12 +1020,14 @@ class App extends Component {
 
                       <div className="col-md-5 remove-padding">
                         <DatePicker className="form-control" selected={this.state.proposed_end_hawaii} onChange={this.proposedEndDateHawaiiHandler} />
-                      </div>
+                      </div> */}
+
                     </div>
 
-                    {/* This row is for Proposed Others Dates */}
+                    
                     <div className="row col-md-12">
-                      <div className="col-md-12 remove-padding">
+
+                      {/* <div className="col-md-12 remove-padding">
                         <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Others</h6>
                       </div>
                       
@@ -838,7 +1041,8 @@ class App extends Component {
 
                       <div className="col-md-5 remove-padding">
                         <DatePicker className="form-control" selected={this.state.proposed_end_others} onChange={this.proposedEndDateOthersHandler} />
-                      </div>
+                      </div> */}
+
                     </div>
                 </div>
 
@@ -877,9 +1081,31 @@ class App extends Component {
 
                     {/* This row is for Travel Start: ALL OTHER MARKET */}
                     <div className="row col-md-12">
-                    <label htmlFor="travel_start_others"><strong>Travel Start:</strong> Other Markets</label><br />
+                      <label htmlFor="travel_start_others"><strong>Travel Start:</strong> Other Markets</label><br />
                       <DatePicker className="form-control" id="travel_start_others" selected={this.state.travel_start_others} onChange={this.travelStartOthersHandler} />
                     </div>
+
+                    {/* This row is for Proposed Hawaii Dates */}
+                    <div className="row col-md-12">
+
+                      <div className="col-md-12 remove-padding">
+                          <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Hawaii</h6>
+                      </div>
+                      <div className="col-md-5 remove-padding">
+                          <DatePicker className="form-control" selected={this.state.proposed_start_hawaii} onChange={this.proposedStartDateHawaiiHandler} />
+                      </div>
+
+                      <div className="col-md-2 text-center">
+                          <h6 className="">to</h6>
+                      </div>
+
+                      <div className="col-md-5 remove-padding">
+                          <DatePicker className="form-control" selected={this.state.proposed_end_hawaii} onChange={this.proposedEndDateHawaiiHandler} />
+                      </div>
+
+                    </div>
+                    
+
                 </div>
 
 
@@ -921,6 +1147,27 @@ class App extends Component {
                     <label htmlFor="travel_end_others"><strong>Completed Travel By:</strong> Other Markets</label><br />
                       <DatePicker className="form-control" id="travel_end_others" selected={this.state.travel_end_others} onChange={this.travelEndOthersHandler} />
                     </div>
+
+
+                    {/* This row is for Proposed Others Dates */}
+                    <div className="row col-md-12">
+                        <div className="col-md-12 remove-padding">
+                          <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Others</h6>
+                        </div>
+                        
+                        <div className="col-md-5 remove-padding">
+                          <DatePicker className="form-control" selected={this.state.proposed_start_others} onChange={this.proposedStartDateOthersHandler} />
+                        </div>
+
+                        <div className="col-md-2 text-center">
+                          <h6 className="">to</h6>
+                        </div>
+
+                        <div className="col-md-5 remove-padding">
+                          <DatePicker className="form-control" selected={this.state.proposed_end_others} onChange={this.proposedEndDateOthersHandler} />
+                        </div>
+                    </div>
+
                 </div>
                 
 
@@ -1120,40 +1367,64 @@ class App extends Component {
                     </div>
                   </div>
                 ))}
-                <div className="row col-md-12">
 
-                </div>
-                {/* <div className="row col-md-12 individual-exception">
-
-                </div> */}
-
-
-          </div>
-
-
-
-
-
-              <div className="form-group col-md-6">
-                <label htmlFor="inputPassword4">First Input</label>
-                <input type="text" className="form-control" id="inputAddress" value = {this.state.firstinput} onChange = {this.updateFirstInput} />
               </div>
-            
 
-            <div className="form-group">
-              <div className="form-check">
-                <input className="form-check-input" type="checkbox" id="gridCheck" />
-                <label className="form-check-label" htmlFor="gridCheck">
-                  Check me out
-                </label>
+              <div className="form-row sale-information">
+                {/* <div className="row col-md-12">
+                  <div className="form-group col-md-6">
+                    <label htmlFor="inputPassword4">First Input</label>
+                    <input type="text" className="form-control" id="inputAddress" value = {this.state.firstinput} onChange = {this.updateFirstInput} />
+                  </div>
+                  <div className="form-group col-md-6">
+                    <div className="form-check">
+                      <input className="form-check-input" type="checkbox" id="gridCheck" />
+                      <label className="form-check-label" htmlFor="gridCheck">Check me out</label>
+                    </div>
+                  </div>
+                </div> */}
+                <div className="row col-md-12">
+                  <div className="form-group col-md-12">
+                    <button type="submit" className="form-control btn btn-primary" id="generate-xml" >Generate XML</button>
+                  </div>
+                </div>
+              </div>
+            </form>
+
+            {/* XML OUTPUT LAYER */}
+            <div className="form-row output-information">
+              <div className="row col-md-12">
+                <div className="col-lg-10 col-md-8 col-sm-6">
+                    <h3 className="">Output:</h3>
+                </div>
+                <div className="form-group col-lg-1 col-md-2 col-sm-3">
+                  <CopyToClipboard text={this.state.xmloutput}
+                  onCopy={() => this.setState({copied: true}, () => console.log(this.state))}>
+                  <button type="submit" className="btn btn-success copy-to-clipboard"> <i className="fa fa-copy"></i> Clipboard</button>
+                  </CopyToClipboard>
+                </div>
+                <div className="form-group col-lg-1 col-md-2 col-sm-3">
+                  <button type="submit" className="btn btn-warning copy-to-clipboard" onClick={this.resetOutputVariable()}> <i className="fa fa-times"></i> Clear</button>
+                </div>
+                
+              </div>
+              <div className="row col-md-12">
+                <div className="form-group col-md-12">
+                  
+                    <pre id="pre-xml-output">
+                          {this.state.xmloutput}
+                    </pre>
+                </div>
               </div>
             </div>
-            <button type="submit" className="btn btn-primary">Generate XML</button>
-
-          </form>
 
 
         </div>
+
+
+
+
+
 
       </div>
       </div>

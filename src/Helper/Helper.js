@@ -303,3 +303,111 @@ export function returnMyCityName(code) {
         'PAE' : 'Everett - Paine Field'
     }[code]
 }
+
+
+// origin_code:data[i][0],
+// origin_city:data[i][1],
+// destination_code:data[i][2],
+// destination_city:data[i][3],
+// price:data[i][4],
+// fare_type:data[i][5],
+
+export function mergeObjects(arr) {
+  var resultArray = [];
+  var urls = [];
+
+  for(var item in arr){
+    var itemIndex = urls.indexOf(arr[item].name);
+    if(itemIndex == -1){
+      urls.push(arr[item].name);
+      var obj = {};
+      obj.name = arr[item].name;
+      obj.origin_code = arr[item].origin_code;
+      obj.origin_city = arr[item].origin_city;
+      obj.destination_code = arr[item].destination_code;
+      obj.destination_city = arr[item].destination_city;
+      obj.default = arr[item].default;
+
+      obj.price_types = [];
+      var variationData = {};
+      variationData.id = arr[item].id;
+      if(arr[item].fare_type !== undefined){
+        variationData.fare_type = arr[item].fare_type;
+      }
+      if(arr[item].price !== undefined){
+        variationData.price = arr[item].price;
+      }
+
+     
+      obj.price_types.push(variationData);
+      resultArray.push(obj);
+
+    }else{
+      var variationData = {};
+      variationData.id = arr[item].id;
+      if(arr[item].fare_type !== undefined){
+        variationData.fare_type = arr[item].fare_type;
+      }
+      if(arr[item].price !== undefined){
+        variationData.price = arr[item].price;
+      }
+      resultArray[itemIndex].price_types.push(variationData)
+    }
+    
+  }
+  return resultArray;
+}
+
+
+export function makeDateMonthInEnglish(date_passed) {
+    var monthNames = [
+        "January", "February", "March",
+        "April", "May", "June", "July",
+        "August", "September", "October",
+        "November", "December"
+    ];
+
+    var monthIndex = date_passed.getMonth();
+
+    return monthNames[monthIndex];
+}
+
+
+
+export function getMyDay(date_passed) {
+    var day = date_passed.getDate();
+    return day;
+}
+
+export function getMyMonth(date_passed) {
+    var month = date_passed.getMonth() + 1;
+    return month;
+}
+
+export function getMyYear(date_passed) {
+    var year = date_passed.getFullYear();
+    return year;
+}
+
+
+export function getMyHour(date_passed) {
+    var hour = date_passed.getHours();
+    return hour;
+}
+
+
+export function getMyMinute(date_passed) {
+    var minute = date_passed.getMinutes();
+    return minute;
+}
+
+export function getMyTimeOfDay(date_passed) {
+    var hour = date_passed.getHours();
+    if (hour < 12){
+        return "AM";
+    }else{
+        return "PM";
+    } 
+}
+
+  

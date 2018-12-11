@@ -93,8 +93,10 @@ h6.proposed-headline{
 }
 .btn.btn-success.add-exception{
   padding:2px 5px;
-  background-color:#38a6da;
-  border-color: #38a6da;
+  background-color:#ead019;
+  border-color: #ead019;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
+  /* color:#6d6b6b; */
 }
 .btn.remove-exception{
   height:30px;
@@ -167,4 +169,41 @@ h6.proposed-headline{
 #inputFile{
   margin-top:10px;
   padding:5px 10px;
+}
+
+#pre-xml-output{
+  overflow-y:auto;
+  width:100%;
+  padding:6px;
+  word-wrap: normal;
+  white-space: pre-wrap;
+  font-size:11px;
+  height:100%;
+}
+.output-information{
+  width:101%;
+  height:100%;
+  background-color:#7aa4bc;
+}
+
+.btn.btn-success.copy-to-clipboard{
+  padding:2px 5px;
+  background-color:#38a6da;
+  border-color: #38a6da;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
+  margin-top:20px;
+}
+
+.btn.btn-warning.copy-to-clipboard{
+  padding:2px 10px;
+  margin-top:20px;
+  border-color:#e17329;
+}
+
+#generate-xml{
+  color:#fff;
+}
+
+.text-area-div{
+  width:100%;
 }
