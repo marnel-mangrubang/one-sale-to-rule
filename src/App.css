@@ -67,12 +67,22 @@ h6.proposed-headline{
   background-color:#d2d2d2;
   padding-top:10px;
 }
+.form-row.club49-information{
+  background-color:#fff;
+  padding-top:10px;
+}
 
 .black-color{
   color:#464545 !important
 }
 .individual-blackout{
   border:1px solid #ffffff;
+  margin-top:5px;
+  padding-bottom:15px;
+}
+
+.individual-club49{
+  border:1px solid #bebdbd;
   margin-top:5px;
   padding-bottom:15px;
 }
@@ -213,4 +223,8 @@ h6.proposed-headline{
 
 .text-area-div{
   width:100%;
+}
+.sharepoint-link{
+  position: relative;
+  top:17px;
 }
