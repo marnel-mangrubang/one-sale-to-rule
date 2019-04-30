@@ -183,12 +183,23 @@ h6.proposed-headline{
   color: #585656;
 } */
 
-#inputFile{
+#inputFile,
+#cleanFile{
   margin-top:10px;
   padding:5px 10px;
 }
 
 #pre-xml-output{
+  overflow-y:auto;
+  width:100%;
+  padding:6px;
+  word-wrap: normal;
+  white-space: pre-wrap;
+  font-size:11px;
+  height:100%;
+}
+
+#pre-xml-clean{
   overflow-y:auto;
   width:100%;
   padding:6px;
@@ -211,6 +222,14 @@ h6.proposed-headline{
   margin-top:20px;
 }
 
+.btn.btn-success.clean-xml{
+  padding:2px 5px;
+  background-color:#3c3b3f;
+  border-color: #3c3b3f;
+  box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
+  margin-top:15px;
+}
+
 .btn.btn-warning.copy-to-clipboard{
   padding:2px 10px;
   margin-top:20px;
@@ -227,4 +246,9 @@ h6.proposed-headline{
 .sharepoint-link{
   position: relative;
   top:17px;
+}
+.detailsForm label.radio-inline{
+  font-size:14px !important;
+  margin-top:20px;
+  color:#da9109;
 }

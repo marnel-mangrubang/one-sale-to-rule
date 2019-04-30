@@ -7,7 +7,20 @@ import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
 import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, mergeObjects, mergeClub49, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay, groupMeByOrigin, getMyFirstTuesday, getMySecondTuesday } from './Helper/Helper';
-import { array } from 'prop-types';
+import XMLParser from 'react-xml-parser';
+import { CSVLink, CSVDownload } from "react-csv";
+
+// const csvData = [
+//   ["Sale_ID", "ORIG", "ORIG_NAME", "DEST", "DEST_NAME", "Advertised_Fare", "Product_Type"],
+//   ["20190423_BOISJC-Main", "BOI",	"Boise",	"SJC",	"San Jose",	"92",	"Main"],
+//   ["20190423_BOISMF-Main", "BOI",	"Boise",	"SMF",	"Sacramento",	"79",	"Main"],
+//   ["", "Yezzi", "Min l3b", "ymin@cocococo.com"]
+// ];
+
+
+const newCsvData = [
+  ["Sale_ID", "ORIG", "ORIG_NAME", "DEST", "DEST_NAME", "Advertised_Fare", "Product_Type"],
+];
 
 
 class App extends Component {
@@ -23,6 +36,7 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      selectedOption:'Saver',
       club49_sheet: false,
       xmloutput: '',
       copied: false,
@@ -87,8 +101,8 @@ class App extends Component {
       days_availability_hawaii: 'Mondays through Thursdays',
       days_availability_mexico: 'Sundays through Wednesdays',
       days_availability_costa_rica: 'Sundays through Wednesdays',
-      days_availability_to_florida: 'Tuesdays, Wednesdays, and Thursdays',
-      days_availability_from_florida: 'Mondays, Tuesdays, and Wednesdays',
+      days_availability_to_florida: 'Mondays, Tuesdays, and Wednesdays',
+      days_availability_from_florida: 'Tuesdays, Wednesdays, and Thursdays',
       days_availability_others: 'Tuesdays, Wednesdays, and Saturdays',
 
       proposed_start_hawaii:null,
@@ -130,6 +144,8 @@ class App extends Component {
     }
     
     this.onFileChange = this.onFileChange.bind(this);
+    // this.cleanFile = this.cleanFile.bind(this);
+
     this.saveDefaultMarkets = this.saveDefaultMarkets.bind(this);
 
     this.updateFirstInput = this.updateFirstInput.bind(this);
@@ -186,6 +202,32 @@ class App extends Component {
     
 
   }
+
+  componentDidMount(){
+    fetch('https://resource.alaskaair.net/-/media/files/deals/qa-files/qa-winter-sale')
+    .then(response => response.text())
+    .then((response) => {
+
+        var xml = new XMLParser().parseFromString(response);    // Assume xmlText contains the example XML
+
+        //console.log(xml);
+        //console.log(xml.getElementsByTagName('TravelDates'));
+        let deal_set_elem = xml.getElementsByTagName('DealSet');
+
+        this.setState({
+          xml_response: deal_set_elem
+        });
+
+
+
+    }).catch((err) => {
+        console.log('fetch', err)
+    })
+
+  }
+
+
+
 
   updateFirstInput(e) {
     this.setState({firstinput: e.target.value});
@@ -513,11 +555,51 @@ class App extends Component {
 
 
 
+  generateMyCSV = (allfares) => {
+   
+    let sale_start = this.state.sale_start_date_string;
+    sale_start = sale_start.replace(/-/g, "");
+
+    this.setState({
+      mycsvfilename: sale_start+"_Flash-Sale"
+    },() => console.log(this.state));
+
+    console.log(allfares);
+
+
+    // allfares = allfares.splice(0, 5);
+    // console.log("combined_array: "+JSON.stringify(allfares));
+    allfares.map((item) => {
+
+        let temp_array = [];
+        temp_array.push(sale_start+"_"+item.name+"-"+item.fare_type,item.name, item.origin_code, item.origin_city, item.destination_code, item.destination_city, item.price, item.fare_type);
+        newCsvData.push(temp_array);
+
+    });
+
+
+    console.log("CSV DATA: "+JSON.stringify(newCsvData));
+    // console.log("exceptions_array: "+exceptions_array);
+    // console.log("exception_test: "+exception_test);
+    // console.log("club49deals: "+club49deals);
+  }
+
+
+
+
+
 
   createMyXml(combined_array, exceptions_array, exception_test, club49deals){
 
+
+      //Create CSV File from Data
+      this.generateMyCSV(this.state.all_my_fares);
+      //Create CSV File from Data
+
+
+
     //CLUB 49 DEALS
-    if(exception_test === false && club49deals === true){
+  if(exception_test === false && club49deals === true){
       let what_combined_fares_to_make_xml_for = combined_array;
 
       
@@ -560,13 +642,13 @@ class App extends Component {
           days_availability = this.state.days_availability_within_alaska;
 
 
-          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB49 -  UPPER: '+array_counter_upper+' Fares');
+          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 -  UPPER: '+array_counter_upper+' Fares');
           let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
           .ele('DealInfo', {'code': 'CLUB_49_SALE', 'dealType':'Saver', 'url':''})
             .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
             .ele('DealTitle').up()
             .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel within Alaska is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel within Alaska is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
             .up()
             let fares_layer = deal_set.ele('Fares');
           item["upper_lower"].map((item2) => {
@@ -580,20 +662,19 @@ class App extends Component {
 
 
         }else if(item["group"] === "FROM_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
+          start_date = this.state.proposed_from_clu49_string;
+          end_date = this.state.proposed_to_clu49_string;
           travel_start = this.state.travel_from_to_us;
           travel_end = this.state.travel_by_to_us;
           days_availability = this.state.days_availability_to_us;
 
-
-          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB49 -  UPPER: '+array_counter_lower+' Fares');
+          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 -  LOWER: '+array_counter_lower+' Fares');
           let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
           .ele('DealInfo', {'code': 'CLUB_49_SALE', 'dealType':'Saver', 'url':''})
             .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
             .ele('DealTitle').up()
             .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel within Alaska is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel to the US is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
             .up()
             let fares_layer = deal_set.ele('Fares');
           item["upper_lower"].map((item2) => {
@@ -625,13 +706,21 @@ class App extends Component {
 
   //NORMAL FLIGHT DEALS WITH SAVER SAVER FARES
   }else if(exception_test === false && club49deals === false){
+
+
+
       let what_combined_fares_to_make_xml_for = combined_array;
       let what_exception_fares_to_make_xml_for = exceptions_array;
 
 
       let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
       .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-      doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+
+      if(this.state.selectedOption === 'Mileage'){
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' AWARD SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+      }else{
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+      }
 
 
       what_combined_fares_to_make_xml_for.map((item) => {
@@ -752,34 +841,68 @@ class App extends Component {
 
         let service_begin_sentence = '';
         let service_ends_sentence = '';
+        let d_type = '';
+        let f_type = '';
+
+          if(this.state.selectedOption === 'Mileage'){
+            d_type = 'MileagePlan';
+            f_type = 'Miles'
+          }else{
+            d_type = 'Saver';
+          }
 
         //console.log(item);
         doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
         let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
+          .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType': d_type, 'url':''})
           .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
           .ele('DealTitle').up()
           .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
           .up()
           let fares_layer = deal_set.ele('Fares');
-          item["price_types"].map((item2) => {
-            if(item["default"]===true && item2['fare_type'] === "Saver"){
-              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }else{
-              fares_layer.ele('Row', {'fareType': item2['fare_type']})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }
-          });
+
+          if(f_type === 'Miles'){
+            item["price_types"].map((item2) => {
+              if(item["default"]===true){
+                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': f_type})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }
+            });
+          }else{
+            item["price_types"].map((item2) => {
+              if(item["default"]===true && item2['fare_type'] === "Saver"){
+                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': item2['fare_type']})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }
+            });
+          }
+
+
 
       });
 
@@ -791,8 +914,8 @@ class App extends Component {
         xmloutput: element
       });
 
-
-    }else{
+  
+  }else{
 
       let what_combined_fares_to_make_xml_for = combined_array;
       let what_exception_fares_to_make_xml_for = exceptions_array;
@@ -800,7 +923,12 @@ class App extends Component {
 
       let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
       .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-      doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+      if(this.state.selectedOption === 'Mileage'){
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' AWARD SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+      }else{
+        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
+      }
+      
 
 
       what_combined_fares_to_make_xml_for.map((item) => {
@@ -922,34 +1050,70 @@ class App extends Component {
 
         let service_begin_sentence = '';
         let service_ends_sentence = '';
+        let d_type = '';
+        let f_type = '';
+
+          if(this.state.selectedOption === 'Mileage'){
+            d_type = 'MileagePlan';
+            f_type = 'Miles'
+          }else{
+            d_type = 'Saver';
+          }
 
         //console.log(item);
         doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
         let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':d_type, 'url':''})
           .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
           .ele('DealTitle').up()
           .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
           .up()
           let fares_layer = deal_set.ele('Fares');
-          item["price_types"].map((item2) => {
-            if(item["default"]===true && item2['fare_type'] === "Saver"){
-              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }else{
-              fares_layer.ele('Row', {'fareType': item2['fare_type']})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }
-          });
+
+          if(f_type === 'Miles'){
+            item["price_types"].map((item2) => {
+              if(item["default"]===true){
+                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': f_type})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }
+            });
+          }else{
+            item["price_types"].map((item2) => {
+              if(item["default"]===true && item2['fare_type'] === "Saver"){
+                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': item2['fare_type']})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }
+            });
+          }
+
+
+
+
       });
 
       what_exception_fares_to_make_xml_for.map((item) => {
@@ -1083,36 +1247,67 @@ class App extends Component {
         }
         /*SPECIFIC TO EXCEPTIONS ONLY*/
         
-        
+        let d_type = '';
+        let f_type = '';
 
+        if(this.state.selectedOption === 'Mileage'){
+          d_type = 'MileagePlan';
+          f_type = 'Miles';
+        }else{
+          d_type = 'Saver';
+        }
 
         //console.log(item);
         doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]+' EXCEPTION');
         let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':'Saver', 'url':''})
+        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':d_type, 'url':''})
           .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
           .ele('DealTitle').up()
           .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees<a href="#terms">may apply</a> for<a href="/content/travel-info/policies/baggage-checked">checked baggage</a>. See<a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
           .up()
           let fares_layer = deal_set.ele('Fares');
-          item["price_types"].map((item2) => {
-            if(item["default"]===true && item2['fare_type'] === "Saver"){
-              fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }else{
-              fares_layer.ele('Row', {'fareType': item2['fare_type']})
-              .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-              .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-              .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-            }
-          });
+          if(f_type === 'Miles'){
+            item["price_types"].map((item2) => {
+              if(item["default"]===true){
+                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': f_type})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+                .ele('Cell','<Data>'+item2["fare_type"]+'</Data>').up()
+              }
+            });
+          }else{
+            item["price_types"].map((item2) => {
+              if(item["default"]===true && item2['fare_type'] === "Saver"){
+                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }else{
+                fares_layer.ele('Row', {'fareType': item2['fare_type']})
+                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
+                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
+                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
+              }
+            });
+          }
+
+
       });
 
 
@@ -1230,6 +1425,69 @@ class App extends Component {
 
 
 
+  // myFunction(xml) {
+  //   var xmlDoc = xml.responseXML;
+  //   var root = xmlDoc.documentElement;
+  //   var currNode = root.childNodes[1];
+  //   var removedNode = currNode.removeChild(currNode.childNodes[1]);
+  //   console.log(removedNode.nodeName);
+  // }
+
+
+  cleanFile = () => () => {
+    
+
+    let array = [...this.state.xml_response]; 
+    let i = array.length;
+    let newCleanArray = [];
+
+    array.map((item, index) => {
+
+      let deal_set_code = item.children[0].attributes["code"];
+      let exp_date = item.attributes["to"];
+
+      exp_date = new Date(exp_date);
+      let right_now = new Date();
+
+        if(exp_date > right_now){
+         // array.splice(index, 1);
+          newCleanArray.push(item);
+        }else{
+          console.log(deal_set_code);
+          console.log(exp_date);
+        }
+    });
+
+    this.setState({
+      clean: newCleanArray
+    },() => console.log(this.state));
+
+
+    // let doc2 = builder.create('FlightDeals', { encoding: 'UTF-8'})
+    //   .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
+  
+    // const clean_copy = this.state.clean.splice();
+    // const updatedItems = clean_copy.map((item) => {
+    //   doc2.ele(item)
+    // });
+
+    // //doc2.toString({pretty: true});
+
+    // let element2 = doc2.toString({pretty: true});
+    
+    // this.setState({
+    //   clean: element2 
+    // })
+
+    //console.log(this.state);
+  }
+
+
+
+
+
+
+
   onFileChange(e, file) {
 
     file = file || e.target.files[0];
@@ -1248,22 +1506,29 @@ class App extends Component {
       for(let index = 1; index < data.length; index++){
 
         //CLUB 49 ONLY
+        if(data[index][0] === 'Travel From:'){
+          index_of_travel_from_to_us  = index+1;
+          index_of_travel_from_within_alaska = index+1;
+
+          this.setState({
+            club49_sheet: true
+          },() => console.log(this.state));
+        }
+
         if(data[index][0] === 'Within Alaska'){
           this.setState({
             club49_sheet: true
           },() => console.log(this.state));
         }
-        if(data[index][0] === 'Travel From:'){
-          index_of_travel_from_to_us  = index+1;
-          index_of_travel_from_within_alaska = index+1;
-          
-        }
-        if(data[index][0] === 'Advance Purchase:'){
+
+
+        if(this.state.club49_sheet === true && data[index][0] === 'Advance Purchase:'){
           index_of_travel_by_to_us  = index-2;
           index_of_travel_by_within_alaska = index-1;
           console.log(index_of_travel_by_to_us);
           console.log(index_of_travel_by_within_alaska);
         }
+
         //CLUB 49 ONLY
 
 
@@ -1631,7 +1896,12 @@ class App extends Component {
   }
 
 
+
   render() {
+
+    // console.log(this.state.selectedOption);
+
+
 
     return (
       <div className="App">
@@ -1639,6 +1909,14 @@ class App extends Component {
 
         <div className="row col-md-12">
           {/* <input type = "text" value = {this.state.firstinput} onChange = {this.updateFirstInput} /> */}
+          <CSVLink 
+            data={newCsvData}
+            filename={this.state.mycsvfilename+".csv"}
+            className="btn btn-primary"
+            target="_blank"
+          >Download CSV</CSVLink>
+
+          {/* <CSVDownload data={csvData} filename={"my-file.csv"} target="_blank" /> */}
 
           <form className="detailsForm"  onSubmit={this.createSaleDetails}>
 
@@ -1657,7 +1935,7 @@ class App extends Component {
                           <i className="fa fa-folder"></i> Sharepoint
                       </a>
                     </div>
-                    <div className="form-group col-md-6">
+                    <div className="form-group col-md-4">
                       <input type="file" className="form-control" id="inputFile" onChange={this.onFileChange} />
                       {/* <div className="form-group-input">
                         <label className="label">
@@ -1667,6 +1945,18 @@ class App extends Component {
                         </label>
                       </div> */}
                     </div>  
+                    <div className="form-group col-md-1">
+                        <label className="radio-inline">
+                            <input type="radio" name="sale_type" defaultChecked value="Saver" onChange={() => this.setState({selectedOption: 'Saver'})}/> Saver
+                        </label>
+                    </div>
+                    <div className="form-group col-md-1">
+                        <label className="radio-inline">
+                            <input type="radio" name="sale_type" value="Mileage" onChange={() => this.setState({selectedOption: 'Mileage'})} /> 
+                            Awards Sale
+                        </label>
+                        
+                    </div>
 
 
                 </div>
@@ -2153,6 +2443,46 @@ class App extends Component {
                 </div>
               </div>
             </div>
+
+
+
+
+
+
+              {/* CLEAN MY XML ROW */}  
+              <div className="form-row club49-information">
+                  <div className="row col-md-12">
+                      <h3 className="information-headline">Clean My XML:</h3>
+                  </div>
+
+
+                  <div className="form-group col-md-12">
+                      <div className="row col-md-12 individual-club49">
+                          <div className="col-md-12">
+                          <button type="submit" className="btn btn-success clean-xml" onClick={this.cleanFile()}> <i className="fa fa-brush"></i> Clean XML</button>
+                          </div>
+
+                          <div className="row col-md-12">
+                          <div className="form-group col-md-12">
+                            
+                              <pre id="pre-xml-clean">
+                                    {JSON.toString(this.state.clean)}
+                              </pre>
+                          </div>
+                        </div>
+                      </div>
+
+                  </div>
+
+
+
+              </div>
+
+
+
+
+
+
 
 
         </div>

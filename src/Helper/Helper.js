@@ -167,7 +167,9 @@ export function returnMyCityName(code) {
         'LGA' : 'New York - LaGuardia',
         'IAD' : 'Washington D.C. - Dulles',
         'PIT' : 'Pittsburgh',
-        'PAE' : 'Everett - Paine Field'
+        'PAE' : 'Everett / Paine Field',
+        'ELP' : 'El Paso',
+        'CMH' : 'Columbus',
     }[code]
 }
 
