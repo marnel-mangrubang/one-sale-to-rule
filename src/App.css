@@ -252,3 +252,18 @@ h6.proposed-headline{
   margin-top:20px;
   color:#da9109;
 }
+
+.btn.csv-sale-details{
+  padding:2px 10px;
+  margin-top:20px;
+  margin-right:20px;
+  background-color:#26da49;
+  border-color:#26da49;
+}
+
+.btn.csv-sale-fares{
+  padding:2px 10px;
+  margin-top:20px;
+  background-color:#26dace;
+  border-color:#26dace;
+}

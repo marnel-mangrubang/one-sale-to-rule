@@ -208,6 +208,10 @@ export function mergeObjects(arr) {
         variationData.price = arr[item].price;
       }
 
+      if(arr[item].taxes !== undefined){
+        variationData.taxes = arr[item].taxes;
+      }
+
      
       obj.price_types.push(variationData);
       resultArray.push(obj);
@@ -246,12 +250,22 @@ export function makeDateMonthInEnglish(date_passed) {
 
 export function getMyDay(date_passed) {
     var day = date_passed.getDate();
-    return day;
+    if(day < 10){
+        day = '0'+day;
+        return day;
+    }else{
+        return day;
+    }
 }
 
 export function getMyMonth(date_passed) {
     var month = date_passed.getMonth() + 1;
-    return month;
+    if(month < 10){
+        month = '0'+month;
+        return month;
+    }else{
+        return month;
+    }
 }
 
 export function getMyYear(date_passed) {
@@ -287,6 +301,7 @@ export function groupMeByOrigin(code) {
     let florida_only_codes = ["FLL","MCO","MIA","TPA"];
     let mexico_only_codes = ["MEX","CUN","GDL","LTO","SJD","ZLO","MZT","PVR","ZIH"];
     let costa_rica_only_codes = ["LIR","SJO","HAV"];
+    let pae_only_codes = ["PAE"];
 
     if(alaska_only_codes.indexOf(code) > -1){
         return "ALASKA";
@@ -298,6 +313,8 @@ export function groupMeByOrigin(code) {
         return "MEXICO";
     }else if(costa_rica_only_codes.indexOf(code) > -1){
         return "COSTA_RICA";
+    }else if(pae_only_codes.indexOf(code) > -1){
+        return "PAE";
     }else{
         return "OTHER_MARKET";
     }
