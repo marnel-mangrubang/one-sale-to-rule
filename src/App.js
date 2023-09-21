@@ -7,11 +7,11 @@ import { CSVLink } from "react-csv";
 import {
   saleFareHeaders,
   saleDetailsHeaders,
-  city_caps_conversion,
 } from "./Helper/Constants.js";
 import CreateXML from "./Helper/CreateXML";
 import { formatDate } from "./Helper/Format";
 import ReadExcel from "./Helper/ReadExcel";
+import { camelCaseCity } from "./Helper/camelCaseCity";
 
 class App extends Component {
   // handleInputChange = (event) =>{
@@ -316,10 +316,10 @@ class App extends Component {
     // let temp_pair = pair;
     // let temp_price = price;
     let new_defaults = [];
-    let temp_obj = {
-      default_market: pair,
-      default_price: price,
-    };
+    // let temp_obj = {
+    //   default_market: pair,
+    //   default_price: price,
+    // };
 
     //let new_defaults.push(temp_obj);
 
@@ -613,8 +613,9 @@ class App extends Component {
     // console.log("combined_array: "+JSON.stringify(allfares));
     allfares.map((item) => {
       //["SALE_ID", "SALE_DATE", "OD", "ORIG", "ORIG_NAME", "DEST", "DEST_NAME", "ADVERTISED_AMOUNT", "FIRST_CLASS_CODE", "FILED_FARE", "TAX", "REGION", "FARE_TYPE", "ROUND_TRIP"],
-      let temp_array = [];
-      temp_array.push(
+
+      // TODO - this is polluting the global object, but I don't understand it well enough to out the side effects from introducing other objects.
+      saleFareHeaders.push([
         sale_start + "_" + item.name + "-" + item.fare_type,
         sale_start,
         item.name,
@@ -629,11 +630,8 @@ class App extends Component {
         item.shortened_region,
         item.fare_type,
         item.round_trip
-      );
-      saleFareHeaders.push(temp_array);
+      ]);
     });
-
-    console.log("CSV DATA: " + JSON.stringify(saleFareHeaders));
   };
 
   generateMySaleDetailsCSV = () => {
@@ -688,6 +686,7 @@ class App extends Component {
       this.state.lowest_price_no_pdc
     );
 
+    // TODO - this is also polluting constant object. Seems like needs to be part of state
     saleDetailsHeaders.push(temp_array);
 
     console.log("CSV SALE DETAILS: " + JSON.stringify(saleDetailsHeaders));
@@ -850,15 +849,7 @@ class App extends Component {
     //console.log(this.state);
   };
 
-  camelCaseCity = (cityname) => {
-    for (let i = 0; i < city_caps_conversion.length; i++) {
-      let myitem = city_caps_conversion[i].AVFM_name;
-      let mycityname = city_caps_conversion[i].City_Name;
-      if (myitem === cityname) {
-        return mycityname;
-      }
-    }
-  };
+  camelCaseCity = camelCaseCity;
 
   onFileChange(e, file) {
     file = file || e.target.files[0];
