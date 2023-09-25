@@ -6,20 +6,8 @@ import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
 import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, mergeObjects, mergeClub49, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay, groupMeByOrigin, getMyFirstTuesday, getMySecondTuesday } from './Helper/Helper';
+import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, mergeObjects, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay, groupMeByOrigin, getMyFirstTuesday, getMySecondTuesday } from './Helper/Helper';
 import XMLParser from 'react-xml-parser';
-import { CSVLink, CSVDownload } from "react-csv";
-import { AssertionError } from 'assert';
-
-
-
-const saleFareHeaders = [
-  ["SALE_ID", "SALE_DATE", "OD", "ORIG", "ORIG_NAME", "DEST", "DEST_NAME", "ADVERTISED_AMOUNT", "FIRST_CLASS_CODE", "FILED_FARE", "TAX", "REGION", "FARE_TYPE", "ROUND_TRIP"],
-];
-
-const saleDetailsHeaders = [
-  ["SALE_ID", "LAUNCH_DATE", "EMAIL_FREQUENCY", "EMAIL_SEGMENTS", "PERFORMANCE_MEDIA_INPUT", "USER_EXPERIENCE_PROBLEMS", "SALE_TYPE", "SALE_NAME", "OVERLAPPING_TICKETING", "TICKETING_START", "TICKETING_END", "TICKETING_DAYS", "TRAVEL_START", "TRAVEL_END", "TRAVEL_DAYS", "TRAVEL_VARIATIONS", "COSTA_RICA_TRAVEL_START", "COSTA_RICA_TRAVEL_END", "COSTA_RICA_TRAVEL_DAYS", "MEXICO_TRAVEL_START", "MEXICO_TRAVEL_END", "MEXICO_TRAVEL_DAYS","HAWAII_TRAVEL_START", "HAWAII_TRAVEL_END", "HAWAII_TRAVEL_DAYS", "BLACKOUT_DATES_FOR_CERTAIN_OD", "NUMBER_OF_OD", "SEASON_TARGET", "ADVANCE_PURCHASE", "SAVER_AVAILABLE", "COMBO_SALE", "LOWEST_PRICE_POINT_SEA", "LOWEST_PRICE_POINT_PDX", "LOWEST_PRICE_POINT_BAY", "LOWEST_PRICE_POINT_LA", "LOWEST_PRICE_POINT_ELSE" ],
-];
 
 
 const city_caps_conversion = [
@@ -684,21 +672,11 @@ const city_caps_conversion = [
 
 class App extends Component {
 
-  // handleInputChange = (event) =>{
-  //   readXlsxFile(event.files[0]).then((rows) => {
-  //     // `rows` is an array of rows
-  //     // each row being an array of cells.
-  //     console.log(rows);
-  //   })
-  // }
-
-
   constructor(props) {
     super(props);
     this.state = {
       hidden_sheet : 4,
       selectedOption:'Saver',
-      club49_sheet: false,
       xmloutput: '',
       copied: false,
       all_my_fares: [],
@@ -940,7 +918,6 @@ class App extends Component {
         default_price: split_market_and_price[1]
       };
 
-
     });
 
     //Loop through default markets array and pass each code pair to markAsDefault function to make each default fare a default market
@@ -951,7 +928,6 @@ class App extends Component {
     this.setState({
       default_markets: new_defaults
     });
-
   }
 
 
@@ -994,11 +970,6 @@ class App extends Component {
       sale_start_date: date,
       sale_start_date_string: temp_string
     });
-
-    //console.log(verifyMyAirportCode("SJC"));
-
-    //console.log("Sale Start Date: "+this.state.sale_start_date);
-    // console.log("Sale Start Date String: "+this.state.sale_start_date_string);
   }
 
 
@@ -1280,56 +1251,6 @@ class App extends Component {
 
 
 
-  generateMySaleFaresCSV = (allfares) => {
-
-    let sale_start = this.state.sale_start_date_string;
-    sale_start = sale_start.replace(/-/g, "");
-
-    this.setState({
-      mycsvfilename: sale_start+"_Flash-Sale"
-    });
-
-    console.log(allfares);
-
-
-    // allfares = allfares.splice(0, 5);
-    // console.log("combined_array: "+JSON.stringify(allfares));
-    allfares.map((item) => {
-//["SALE_ID", "SALE_DATE", "OD", "ORIG", "ORIG_NAME", "DEST", "DEST_NAME", "ADVERTISED_AMOUNT", "FIRST_CLASS_CODE", "FILED_FARE", "TAX", "REGION", "FARE_TYPE", "ROUND_TRIP"],
-        let temp_array = [];
-        temp_array.push(sale_start+"_"+item.name+"-"+item.fare_type, sale_start, item.name, item.origin_code, item.origin_city, item.destination_code, item.destination_city, item.price, item.fare_class_code, item.filed_fare, item.taxes, item.shortened_region, item.fare_type, item.round_trip);
-        saleFareHeaders.push(temp_array);
-
-    });
-
-
-    console.log("CSV DATA: "+JSON.stringify(saleFareHeaders));
-  }
-
-
-
-  generateMySaleDetailsCSV = () => {
-
-    let sale_start = this.state.sale_start_date_string;
-    sale_start = sale_start.replace(/-/g, "");
-
-    this.setState({
-      mycsvsaledetailsfilename: sale_start+"_Sale-DETAILS"
-    });
-
-
-// ["SALE_ID", "LAUNCH_DATE", "EMAIL_FREQUENCY", "EMAIL_SEGMENTS", "PERFORMANCE_MEDIA_INPUT", "USER_EXPERIENCE_PROBLEMS", "SALE_TYPE", "SALE_NAME", "OVERLAPPING_TICKETING", "TICKETING_START", "TICKETING_END", "TICKETING_DAYS", "TRAVEL_START", "TRAVEL_END", "TRAVEL_DAYS", "TRAVEL_VARIATIONS", "COSTA_RICA_TRAVEL_START", "COSTA_RICA_TRAVEL_END", "COSTA_RICA_TRAVEL_DAYS", "MEXICO_TRAVEL_START", "MEXICO_TRAVEL_END", "MEXICO_TRAVEL_DAYS","HAWAII_TRAVEL_START", "HAWAII_TRAVEL_END", "HAWAII_TRAVEL_DAYS", "BLACKOUT_DATES_FOR_CERTAIN_OD", "NUMBER_OF_OD", "SEASON_TARGET", "ADVANCE_PURCHASE", "SAVER_AVAILABLE", "COMBO_SALE", "LOWEST_PRICE_POINT_SEA", "LOWEST_PRICE_POINT_PDX", "LOWEST_PRICE_POINT_BAY", "LOWEST_PRICE_POINT_LA", "LOWEST_PRICE_POINT_ELSE" ],
-
-    let temp_array = [];
-    temp_array.push(sale_start, this.formatMyDateForCSV(this.state.sale_start_date), '', '', '', '', this.state.sale_type, this.state.sale_objective, '', this.formatMyDateForCSV(this.state.sale_start_date), this.formatMyDateForCSV(this.state.sale_end_date), '', this.formatMyDateForCSV(this.state.travel_start_others), this.formatMyDateForCSV(this.state.travel_end_others), '', '', this.formatMyDateForCSV(this.state.travel_start_costa_rica), this.formatMyDateForCSV(this.state.travel_end_costa_rica), '', this.formatMyDateForCSV(this.state.travel_start_mexico), this.formatMyDateForCSV(this.state.travel_end_mexico), '', this.formatMyDateForCSV(this.state.travel_start_alaska_to_from_hawaii), this.formatMyDateForCSV(this.state.travel_end_alaska_to_from_hawaii), '', this.formatMyDateForCSV(this.state.blackout_start_others)+" to "+ this.formatMyDateForCSV(this.state.blackout_end_others), this.state.number_of_distinct_od, '', this.state.advance_purchase, '', '', this.state.lowest_price_sea, this.state.lowest_price_pdx, this.state.lowest_price_bay, this.state.lowest_price_la, this.state.lowest_price_no_pdc);
-
-    saleDetailsHeaders.push(temp_array);
-
-    console.log("CSV SALE DETAILS: "+JSON.stringify(saleDetailsHeaders));
-
-  }
-
-
 
   changeHiddenSheet = (e) => {
     this.setState({
@@ -1340,374 +1261,8 @@ class App extends Component {
 
 
 
-
-
-  createMyXml(combined_array, exceptions_array, exception_test, club49deals){
-
-
-      //Create CSV File from Data
-      this.generateMySaleFaresCSV(this.state.all_my_fares);
-      this.generateMySaleDetailsCSV();
-      //Create CSV File from Data
-      console.log(this.state);
-
-
-    //CLUB 49 DEALS
-  if(exception_test === false && club49deals === true){
-      let what_combined_fares_to_make_xml_for = combined_array;
-
-
-      let array_counter_upper = 0;
-      let array_counter_lower = 0;
-
-      what_combined_fares_to_make_xml_for.map((myitem) => {
-        if(myitem["group"] ==="ALASKA_ALASKA"){
-          myitem["upper_lower"].map((myitem2) => {
-            array_counter_upper++;
-          });
-        }else{
-          myitem["upper_lower"].map((myitem2) => {
-            array_counter_lower++;
-          });
-        }
-      });
-
-      //console.log("Length of CLUB49: "+array_counter);
-
-      let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
-      .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-      doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
-
-
-      what_combined_fares_to_make_xml_for.map((item) => {
-
-        let start_date = '';
-        let end_date = '';
-        let travel_start = null;
-        let travel_end = null;
-        let days_availability = '';
-
-
-        if(item["group"] === "ALASKA_ALASKA"){
-          start_date = this.state.proposed_from_clu49_string;
-          end_date = this.state.proposed_to_clu49_string;
-          travel_start = this.state.travel_from_within_alaska;
-          travel_end = this.state.travel_by_within_alaska;
-          days_availability = this.state.days_availability_within_alaska;
-
-
-          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 -  UPPER: '+array_counter_upper+' Fares');
-          let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-          .ele('DealInfo', {'code': 'CLUB_49_SALE', 'dealType':'Saver', 'url':''})
-            .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-            .ele('DealTitle').up()
-            .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel within Alaska is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-            .up()
-            let fares_layer = deal_set.ele('Fares');
-          item["upper_lower"].map((item2) => {
-            fares_layer.ele('Row', {'fareType': 'Main'})
-            .ele('Cell','<Data>'+item2["origin_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["origin_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["destination_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["destination_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-          });
-
-
-        }else if(item["group"] === "FROM_ALASKA"){
-          start_date = this.state.proposed_from_clu49_string;
-          end_date = this.state.proposed_to_clu49_string;
-          travel_start = this.state.travel_from_to_us;
-          travel_end = this.state.travel_by_to_us;
-          days_availability = this.state.days_availability_to_us;
-
-          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 -  LOWER: '+array_counter_lower+' Fares');
-          let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-          .ele('DealInfo', {'code': 'CLUB_49_SALE', 'dealType':'Saver', 'url':''})
-            .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-            .ele('DealTitle').up()
-            .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel to the US is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-            .up()
-            let fares_layer = deal_set.ele('Fares');
-          item["upper_lower"].map((item2) => {
-            fares_layer.ele('Row', {'fareType': 'Main'})
-            .ele('Cell','<Data>'+item2["origin_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["origin_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["destination_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["destination_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-          });
-
-        }else if(item["group"] === "ALASKA_HAWAII"){
-          start_date = this.state.proposed_from_clu49_string;
-          end_date = this.state.proposed_to_clu49_string;
-          travel_start = this.state.travel_from_to_us;
-          travel_end = this.state.travel_by_to_us;
-          days_availability = this.state.days_availability_hawaii;
-
-          doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' CLUB 49 -  LOWER: '+array_counter_lower+' Fares');
-          let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-          .ele('DealInfo', {'code': 'CLUB_49_SALE', 'dealType':'Saver', 'url':''})
-            .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-            .ele('DealTitle').up()
-            .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-            .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel to Hawaii is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-            .up()
-            let fares_layer = deal_set.ele('Fares');
-          item["upper_lower"].map((item2) => {
-            fares_layer.ele('Row', {'fareType': 'Main'})
-            .ele('Cell','<Data>'+item2["origin_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["origin_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["destination_code"]+'</Data>').up()
-            .ele('Cell','<Data>'+returnMyCityName(item2["destination_code"])+'</Data>').up()
-            .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-          });
-
-
-        }else{
-
-        }
-
-
-      });
-
-      let element = doc.toString({pretty: true});
-      element = element.replace(/&lt;/g, '<');
-      element = element.replace(/&gt;/g, '>');
-
-      this.setState({
-        xmloutput: element
-      });
-
-
-
-  //NORMAL FLIGHT DEALS WITH SAVER SAVER FARES
-  }else if(exception_test === false && club49deals === false){
-
-
-
-      let what_combined_fares_to_make_xml_for = combined_array;
-      let what_exception_fares_to_make_xml_for = exceptions_array;
-
-
-      let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
-      .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-
-      if(this.state.selectedOption === 'Mileage'){
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' AWARD SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
-      }else{
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
-      }
-
-
-      what_combined_fares_to_make_xml_for.map((item) => {
-
-        let start_date = '';
-        let end_date = '';
-        let travel_start = null;
-        let travel_end = null;
-        let days_availability = '';
-        let black_out_date_sentence = '';
-
-        if(item["group"] === "ALASKA_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_alaska_to_from_hawaii;
-          travel_end = this.state.travel_end_alaska_to_from_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_alaska_to_from_hawaii !== null && this.state.blackout_end_alaska_to_from_hawaii !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_start_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_start_alaska_to_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_end_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_end_alaska_to_from_hawaii)+'. '
-            }
-        }else if(item["group"] === "ALASKA_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_HAWAII" || item["group"] === "FROM_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_hawaii;
-          travel_end = this.state.travel_end_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_from_hawaii !== null && this.state.blackout_end_from_hawaii !== null && item["group"] === "FROM_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_from_hawaii)+' '+getMyDay(this.state.blackout_start_from_hawaii)+', '+getMyYear(this.state.blackout_start_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_from_hawaii)+' '+getMyDay(this.state.blackout_end_from_hawaii)+', '+getMyYear(this.state.blackout_end_from_hawaii)+'. '
-            }
-            if(this.state.blackout_start_to_hawaii !== null && this.state.blackout_start_to_hawaii !== null && item["group"] === "TO_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_to_hawaii)+' '+getMyDay(this.state.blackout_start_to_hawaii)+', '+getMyYear(this.state.blackout_start_to_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_to_hawaii)+' '+getMyDay(this.state.blackout_end_to_hawaii)+', '+getMyYear(this.state.blackout_end_to_hawaii)+'. '
-            }
-        }else if(item["group"] === "TO_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_to_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_from_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "MEXICO"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_mexico;
-          travel_end = this.state.travel_end_mexico;
-          days_availability = this.state.days_availability_mexico;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_mexico !== null && this.state.blackout_start_mexico !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_mexico)+' '+getMyDay(this.state.blackout_start_mexico)+', '+getMyYear(this.state.blackout_start_mexico)+' to '+makeDateMonthInEnglish(this.state.blackout_end_mexico)+' '+getMyDay(this.state.blackout_end_mexico)+', '+getMyYear(this.state.blackout_end_mexico)+'. '
-            }
-        }else if(item["group"] === "COSTA_RICA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_costa_rica;
-          travel_end = this.state.travel_end_costa_rica;
-          days_availability = this.state.days_availability_costa_rica;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_costa_rica !== null && this.state.blackout_start_costa_rica !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_costa_rica)+' '+getMyDay(this.state.blackout_start_costa_rica)+', '+getMyYear(this.state.blackout_start_costa_rica)+' to '+makeDateMonthInEnglish(this.state.blackout_end_costa_rica)+' '+getMyDay(this.state.blackout_end_costa_rica)+', '+getMyYear(this.state.blackout_end_costa_rica)+'. '
-            }
-        }else if(item["group"] === "PAE"){
-          start_date = this.state.proposed_start_pae_string;
-          end_date = this.state.proposed_end_pae_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "OTHER_MARKET"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else{
-
-        }
-
-        let service_begin_sentence = '';
-        let service_ends_sentence = '';
-        let d_type = '';
-        let f_type = '';
-
-          if(this.state.selectedOption === 'Mileage'){
-            d_type = 'MileagePlan';
-            f_type = 'Miles'
-          }else{
-            d_type = 'Saver';
-          }
-
-        //console.log(item);
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
-        let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-          .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType': d_type, 'url':''})
-          .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-          .ele('DealTitle').up()
-          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-          .up()
-          let fares_layer = deal_set.ele('Fares');
-
-          if(f_type === 'Miles'){
-            item["price_types"].map((item2) => {
-              if(item["default"]===true){
-                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': f_type})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }
-            });
-          }else{
-            item["price_types"].map((item2) => {
-              if(item["default"]===true && item2['fare_type'] === "Saver"){
-                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': item2['fare_type']})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }
-            });
-          }
-
-
-
-      });
-
-      let element = doc.toString({pretty: true});
-      element = element.replace(/&lt;/g, '<');
-      element = element.replace(/&gt;/g, '>');
-
-      this.setState({
-        xmloutput: element
-      });
-
-
-  }else{
-
-      let what_combined_fares_to_make_xml_for = combined_array;
-      let what_exception_fares_to_make_xml_for = exceptions_array;
+  createMyXml(combined_array){
+      console.log('State inside of createMyXML:', this.state);
 
 
       let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
@@ -1719,8 +1274,7 @@ class App extends Component {
       }
 
 
-
-      what_combined_fares_to_make_xml_for.map((item) => {
+      combined_array.map((item) => {
 
         let start_date = '';
         let end_date = '';
@@ -1859,7 +1413,6 @@ class App extends Component {
             d_type = 'Saver';
           }
 
-        //console.log(item);
         doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
         let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
         .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':d_type, 'url':''})
@@ -1910,214 +1463,8 @@ class App extends Component {
             });
           }
 
-
-
-
       });
 
-      what_exception_fares_to_make_xml_for.map((item) => {
-
-        let start_date = '';
-        let end_date = '';
-        let travel_start = null;
-        let travel_end = null;
-        let days_availability = '';
-        let black_out_date_sentence = '';
-
-        if(item["group"] === "ALASKA_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_alaska_to_from_hawaii;
-          travel_end = this.state.travel_end_alaska_to_from_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_alaska_to_from_hawaii !== null && this.state.blackout_end_alaska_to_from_hawaii !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_start_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_start_alaska_to_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_end_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_end_alaska_to_from_hawaii)+'. '
-            }
-        }else if(item["group"] === "ALASKA_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_HAWAII" || item["group"] === "FROM_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_hawaii;
-          travel_end = this.state.travel_end_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_from_hawaii !== null && this.state.blackout_end_from_hawaii !== null && item["group"] === "FROM_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_from_hawaii)+' '+getMyDay(this.state.blackout_start_from_hawaii)+', '+getMyYear(this.state.blackout_start_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_from_hawaii)+' '+getMyDay(this.state.blackout_end_from_hawaii)+', '+getMyYear(this.state.blackout_end_from_hawaii)+'. '
-            }
-            if(this.state.blackout_start_to_hawaii !== null && this.state.blackout_start_to_hawaii !== null && item["group"] === "TO_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_to_hawaii)+' '+getMyDay(this.state.blackout_start_to_hawaii)+', '+getMyYear(this.state.blackout_start_to_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_to_hawaii)+' '+getMyDay(this.state.blackout_end_to_hawaii)+', '+getMyYear(this.state.blackout_end_to_hawaii)+'. '
-            }
-        }else if(item["group"] === "TO_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_to_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_from_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "MEXICO"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_mexico;
-          travel_end = this.state.travel_end_mexico;
-          days_availability = this.state.days_availability_mexico;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_mexico !== null && this.state.blackout_start_mexico !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_mexico)+' '+getMyDay(this.state.blackout_start_mexico)+', '+getMyYear(this.state.blackout_start_mexico)+' to '+makeDateMonthInEnglish(this.state.blackout_end_mexico)+' '+getMyDay(this.state.blackout_end_mexico)+', '+getMyYear(this.state.blackout_end_mexico)+'. '
-            }
-        }else if(item["group"] === "COSTA_RICA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_costa_rica;
-          travel_end = this.state.travel_end_costa_rica;
-          days_availability = this.state.days_availability_costa_rica;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_costa_rica !== null && this.state.blackout_start_costa_rica !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_costa_rica)+' '+getMyDay(this.state.blackout_start_costa_rica)+', '+getMyYear(this.state.blackout_start_costa_rica)+' to '+makeDateMonthInEnglish(this.state.blackout_end_costa_rica)+' '+getMyDay(this.state.blackout_end_costa_rica)+', '+getMyYear(this.state.blackout_end_costa_rica)+'. '
-            }
-        }else if(item["group"] === "PAE"){
-          start_date = this.state.proposed_start_pae_string;
-          end_date = this.state.proposed_end_pae_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "OTHER_MARKET"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else{
-
-        }
-
-
-        /*SPECIFIC TO EXCEPTIONS ONLY*/
-        if(item["days_available"] !== ''){
-          days_availability = item["days_available"];
-        }
-        let service_begin_sentence = '';
-        if(item["service_begins"] !== null){
-          service_begin_sentence = 'Service begins '+ makeDateMonthInEnglish(item["service_begins"])+' '+getMyDay(item["service_begins"])+', '+getMyYear(item["service_begins"])+'. ';
-        }
-        let service_ends_sentence = '';
-        if(item["service_ends"] !== null){
-          service_ends_sentence = 'Service ends '+ makeDateMonthInEnglish(item["service_ends"])+' '+getMyDay(item["service_ends"])+', '+getMyYear(item["service_ends"])+'. ';
-        }
-        /*SPECIFIC TO EXCEPTIONS ONLY*/
-
-        let d_type = '';
-        let f_type = '';
-
-        if(this.state.selectedOption === 'Mileage'){
-          d_type = 'MileagePlan';
-          f_type = 'Miles';
-        }else{
-          d_type = 'Saver';
-        }
-
-        //console.log(item);
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]+' EXCEPTION');
-        let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':d_type, 'url':''})
-          .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-          .ele('DealTitle').up()
-          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-          .up()
-          let fares_layer = deal_set.ele('Fares');
-          if(f_type === 'Miles'){
-            item["price_types"].map((item2) => {
-              if(item["default"]===true){
-                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': f_type})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }
-            });
-          }else{
-            item["price_types"].map((item2) => {
-              if(item["default"]===true && item2['fare_type'] === "Saver"){
-                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': item2['fare_type']})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }
-            });
-          }
-
-
-      });
 
 
       let element = doc.toString({pretty: true});
@@ -2127,12 +1474,12 @@ class App extends Component {
       this.setState({
         xmloutput: element
       });
-
-    }
-
-
 
   }
+
+
+
+
 
 
 
@@ -2147,7 +1494,7 @@ class App extends Component {
     console.log(this.state.exceptions.length);
 
     if(this.state.exceptions.length <= 0){
-      this.createMyXml(this.state.combined_saver_and_main, null, false, false);
+      this.createMyXml(this.state.combined_saver_and_main);
     }else{
 
       newAllMyFares.map((item1, index1) => {
@@ -2173,11 +1520,11 @@ class App extends Component {
               this.setState({
                 combined_saver_and_main: array_all_combined_prices,
                 pulled_exception_fares: newPulledExceptionFares
-              }, () => this.createMyXml(this.state.combined_saver_and_main, this.state.pulled_exception_fares, true));
+              }, () => this.createMyXml(this.state.combined_saver_and_main));
 
 
 
-              this.createMyXml(this.state.combined_saver_and_main, this.state.pulled_exception_fares, true, false);
+              this.createMyXml(this.state.combined_saver_and_main);
 
               console.log("Fare Removed from Index: "+index1);
             }
@@ -2223,12 +1570,7 @@ class App extends Component {
   createSaleDetails(e){
     e.preventDefault();
 
-    if(this.state.club49_sheet === true){
-      this.createMyXml(this.state.combined_club_49, null, false, true);
-    }else{
-      this.verifyThatExceptionsIsNotEmpty();
-    }
-
+    this.verifyThatExceptionsIsNotEmpty();
 
   }
 
@@ -2243,53 +1585,36 @@ class App extends Component {
   // }
 
 
-  cleanFile = () => () => {
+  // cleanFile = () => () => {
 
 
-    let array = [...this.state.xml_response];
-    let i = array.length;
-    let newCleanArray = [];
+  //   let array = [...this.state.xml_response];
+  //   let i = array.length;
+  //   let newCleanArray = [];
 
-    array.map((item, index) => {
+  //   array.map((item, index) => {
 
-      let deal_set_code = item.children[0].attributes["code"];
-      let exp_date = item.attributes["to"];
+  //     let deal_set_code = item.children[0].attributes["code"];
+  //     let exp_date = item.attributes["to"];
 
-      exp_date = new Date(exp_date);
-      let right_now = new Date();
+  //     exp_date = new Date(exp_date);
+  //     let right_now = new Date();
 
-        if(exp_date > right_now){
-         // array.splice(index, 1);
-          newCleanArray.push(item);
-        }else{
-          console.log(deal_set_code);
-          console.log(exp_date);
-        }
-    });
+  //       if(exp_date > right_now){
+  //        // array.splice(index, 1);
+  //         newCleanArray.push(item);
+  //       }else{
+  //         console.log(deal_set_code);
+  //         console.log(exp_date);
+  //       }
+  //   });
 
-    this.setState({
-      clean: newCleanArray
-    });
+  //   this.setState({
+  //     clean: newCleanArray
+  //   });
 
 
-    // let doc2 = builder.create('FlightDeals', { encoding: 'UTF-8'})
-    //   .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-
-    // const clean_copy = this.state.clean.splice();
-    // const updatedItems = clean_copy.map((item) => {
-    //   doc2.ele(item)
-    // });
-
-    // //doc2.toString({pretty: true});
-
-    // let element2 = doc2.toString({pretty: true});
-
-    // this.setState({
-    //   clean: element2
-    // })
-
-    //console.log(this.state);
-  }
+  // }
 
 
 
@@ -2334,42 +1659,8 @@ class App extends Component {
     readXlsxFile(file, { sheet: 1 }).then((data) => {
       //Loops through every row in the sheet
 
-      //CLUB 49 ONLY
-      let index_of_travel_from_to_us = null;
-      let index_of_travel_from_within_alaska = null;
-      let index_of_travel_by_to_us = null;
-      let index_of_travel_by_within_alaska = null;
-      //CLUB 49 ONLY
 
       for(let index = 0; index < data.length; index++){
-
-        //console.log(data[index]);
-
-        //CLUB 49 ONLY
-        if(data[index][0] === 'Travel From:'){
-          index_of_travel_from_to_us  = index+1;
-          index_of_travel_from_within_alaska = index+1;
-
-          this.setState({
-            club49_sheet: true
-          });
-        }
-
-        if(data[index][0] === 'Within Alaska'){
-          this.setState({
-            club49_sheet: true
-          });
-        }
-
-
-        if(this.state.club49_sheet === true && data[index][0] === 'Advance Purchase:'){
-          index_of_travel_by_to_us  = index-2;
-          index_of_travel_by_within_alaska = index-1;
-        }
-
-        //CLUB 49 ONLY
-
-
 
         // SALE_TYPE (Col 7)
         if(data[index][0] === 'OW SALE:' && data[index][1] !== null){
@@ -2614,98 +1905,13 @@ class App extends Component {
         }
 
 
-
-
-
-
-
-
       }//end of for loop
-
-      //Get CLUB49 TO U.S Travel Dates
-      if(index_of_travel_from_to_us > 1){
-        let temp_string = moment(data[index_of_travel_from_to_us][1]).format('YYYY-MM-DD');
-        this.setState({
-          travel_from_to_us : data[index_of_travel_from_to_us][1],
-          travel_from_to_us_string : temp_string
-        });
-      }
-      if(index_of_travel_by_to_us > 1){
-        if(data[index_of_travel_by_to_us][0] === "To U.S."){
-          let temp_string = moment(data[index_of_travel_by_to_us][1]).format('YYYY-MM-DD');
-          this.setState({
-            travel_by_to_us : data[index_of_travel_by_to_us][1],
-            travel_by_to_us_string : temp_string
-          });
-        }
-      }
-
-      if(index_of_travel_from_within_alaska > 1){
-        let temp_string = moment(data[index_of_travel_from_within_alaska][1]).format('YYYY-MM-DD');
-        this.setState({
-          travel_from_within_alaska : data[index_of_travel_from_within_alaska][1],
-          travel_from_within_alaska_string : temp_string
-        });
-      }
-      if(index_of_travel_by_within_alaska > 1){
-        //if(data[index_of_travel_by_within_alaska][0] === "Within Alaska"){
-          let temp_string = moment(data[index_of_travel_by_within_alaska][1]).format('YYYY-MM-DD');
-          this.setState({
-            travel_by_within_alaska : data[index_of_travel_by_within_alaska][1],
-            travel_by_within_alaska_string : temp_string
-          });
-        //}
-      }
-      //Get CLUB49 WITHIN ALASKA Travel Dates
-
-
-
-
-
-
-
-
-
-
-      // let newArray = this.state.all_my_fares.slice();
-      // newArray.push({
-      //   id: i,
-      //   name: data[i][0],
-      //   group: mygroup,
-      //   default: false,
-      //   origin_code:data[i][2],
-      //   origin_city:this.camelCaseCity(data[i][3]),
-      //   destination_code:data[i][4],
-      //   destination_city:this.camelCaseCity(data[i][5]),
-      //   price:data[i][6],
-      //   fare_type:data[i][11],
-      //   fare_class_code:data[i][7],
-      //   filed_fare:data[i][8],
-      //   taxes:data[i][9],
-      //   shortened_region:data[i][10],
-      //   round_trip:data[i][12],
-      // });
-      // this.setState({
-      //   all_my_fares:newArray
-      // });
-
-
-
 
 
     })//end of readXlsxFile for Sheet 1
 
 
-          let sheet_name= '';
-          if(this.state.club49_sheet === true){
-            sheet_name = 21;
-          }else if(this.state.club49_sheet === false){
-            sheet_name = this.state.hidden_sheet;
-          }else{
-            sheet_name = this.state.hidden_sheet;
-          }
-
-
+        let sheet_name = this.state.hidden_sheet;
 
         //US Ad Fare Sheet Looper
         readXlsxFile(file, { sheet: sheet_name }).then((data) => {
@@ -2716,45 +1922,24 @@ class App extends Component {
 
               for(let i = 0; i < data.length; i++){
 
-                if(this.state.club49_sheet === true){
-                }else{
-                    //Get number of Distinct OD from the US Ad Fare Sheet TAB
-                    if(data[i].indexOf("Distinct ODs:") > -1){
-                      this.setState({
-                        number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:")+1]
-                      });
-                      //console.log(this.state.number_of_distinct_od);
-                    }
+                //Get number of Distinct OD from the US Ad Fare Sheet TAB
+                if(data[i].indexOf("Distinct ODs:") > -1){
+                  this.setState({
+                    number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:")+1]
+                  });
                 }
 
 
-                // console.log("DATA[i][0] = ", data[i][0])
-
-
-
                 if (typeof data[i][0] === 'string' && data[i][0] !== null) {
-
-
 
                   //Checks that the values in index 0 and 2 are airport codes for every row in the spreadsheet
                   if(typeof data[i][2] == 'string' && (data[i][2].length === 3 && data[i][4].length === 3)){
 
                     let my_fare_type = data[i][11];
 
-                    // console.log(data[i][2].length);
-
                     let mygroup = "";
-                    if( (groupMeByOrigin(data[i][2]) === "ALASKA" && groupMeByOrigin(data[i][4]) === "HAWAII") || (groupMeByOrigin(data[i][2]) === "HAWAII" && groupMeByOrigin(data[i][4]) === "ALASKA") ){
-                        mygroup = "ALASKA_HAWAII";
-                    }else if(groupMeByOrigin(data[i][2]) === "ALASKA" && groupMeByOrigin(data[i][4]) === "ALASKA"){
-                        //CLUB49 UPPER
-                        mygroup = "ALASKA_ALASKA";
-                    }else if(groupMeByOrigin(data[i][2]) === "ALASKA"){
-                        //CLUB49 LOWER
-                        mygroup = "FROM_ALASKA";
-                    }else if(groupMeByOrigin(data[i][4]) === "ALASKA"){
-                        mygroup = "TO_ALASKA";
-                    }else if(groupMeByOrigin(data[i][2]) === "HAWAII"){
+
+                    if(groupMeByOrigin(data[i][2]) === "HAWAII"){
                         mygroup = "FROM_HAWAII";
                     }else if(groupMeByOrigin(data[i][4]) === "HAWAII"){
                         mygroup = "TO_HAWAII";
@@ -2833,15 +2018,8 @@ class App extends Component {
                   if(typeof data[i][2] == 'string' && (data[i][2].length === 3 && data[i][4].length === 3)){
                     //console.log(data[i]);
                     let mygroup = "";
-                    if( (groupMeByOrigin(data[i][2]) === "ALASKA" && groupMeByOrigin(data[i][4]) === "HAWAII") || (groupMeByOrigin(data[i][2]) === "HAWAII" && groupMeByOrigin(data[i][4]) === "ALASKA") ){
-                        mygroup = "ALASKA_HAWAII";
-                    }else if(groupMeByOrigin(data[i][2]) === "ALASKA" && groupMeByOrigin(data[i][4]) === "ALASKA"){
-                        //CLUB49 UPPER
-                        mygroup = "ALASKA_ALASKA";
-                    }else if(groupMeByOrigin(data[i][2]) === "ALASKA"){
-                        //CLUB49 LOWER
-                        mygroup = "FROM_ALASKA";
-                    }else if(groupMeByOrigin(data[i][4]) === "ALASKA"){
+
+                    if(groupMeByOrigin(data[i][4]) === "ALASKA"){
                         mygroup = "TO_ALASKA";
                     }else if(groupMeByOrigin(data[i][2]) === "HAWAII"){
                         mygroup = "FROM_HAWAII";
@@ -2868,12 +2046,7 @@ class App extends Component {
 
                     //console.log(data[i]);
                     let newArray = this.state.all_my_fares.slice();
-                    // let my_fare_type = data[i][11];
-                    // if(my_fare_type === "SAVER"){
-                    //   my_fare_type = "Saver";
-                    // }else{
-                    //   my_fare_type = "Main";
-                    // }
+
 
 
                       newArray.push({
@@ -2922,38 +2095,13 @@ class App extends Component {
 
 
           let temp_combined = this.state.combined_saver_and_main.slice();
-          let temp_combined_club49 = this.state.all_my_fares.slice();
 
-          if(this.state.club49_sheet === true){
-            //Get the tuesday after the travel start date
-            console.log("CLUB 49 Calendar Dates : START :"+getMyFirstTuesday(this.state.travel_from_to_us, 2));
-            console.log("CLUB 49 Calendar Dates : END :"+getMySecondTuesday(this.state.travel_from_to_us, 2));
+          temp_combined = mergeObjects(this.state.all_my_fares);
 
-            let temp_string1 = moment(getMyFirstTuesday(this.state.travel_from_to_us, 2)).format('YYYY-MM-DD');
-            let temp_string2 = moment(getMySecondTuesday(this.state.travel_from_to_us, 2)).format('YYYY-MM-DD');
-
-            this.setState({
-              proposed_from_clu49: getMyFirstTuesday(this.state.travel_from_to_us, 2),
-              proposed_to_clu49: getMySecondTuesday(this.state.travel_from_to_us, 2),
-              proposed_from_clu49_string: temp_string1,
-              proposed_to_clu49_string: temp_string2
-            });
-
-
-
-            temp_combined_club49 = mergeClub49(this.state.all_my_fares);
-
-            this.setState({
-              combined_club_49: temp_combined_club49
-            });
-
-          }else{
-            temp_combined = mergeObjects(this.state.all_my_fares);
-
-            this.setState({
-              combined_saver_and_main: temp_combined
-            });
-          }
+          this.setState({
+            combined_saver_and_main: temp_combined
+          });
+          
 
         })//end of readXlsxFile for US Ad Fare Sheet
 
@@ -3090,13 +2238,7 @@ class App extends Component {
     //Only read AS.com tab if its a saver spreadsheet
     if(this.state.selectedOption === 'Saver'){
 
-      let ascom_sheet= '';
-      if(this.state.club49_sheet === true){
-        ascom_sheet = 'AS.com';
-      }else{
-        ascom_sheet = 'AS.com';
-      }
-
+      let  ascom_sheet = 'AS.com';
       // //AS.com TAB Looper
       readXlsxFile(file, { sheet: ascom_sheet }).then((data) => {
         //Loops through every row in the sheet
@@ -3123,40 +2265,10 @@ class App extends Component {
 
       })//end of readXlsxFile for Sheet 4
 
-
-    }else{
-      readXlsxFile(file, { sheet: 3 }).then((data) => {
-        //Loops through every row in the sheet
-
-            for(let i = 0; i < data.length; i++){
-
-              if(data[i][16] !== null && data[i][17] !== null){
-                if(typeof data[i][16] == 'string' && typeof data[i][17] == 'number'){
-                // console.log(data[i][17] + " : " + data[i][18]);
-
-                  this.markAsDefault(data[i][16]);
-                  // this.grabDefaultsFromSheet(data[i][17], data[i][18]);
-                  this.displayData.push(<div className="display-data" style={{fontSize:13, fontWeight:'bold'}}><div className="cityPair" style={{textAlign:'left',marginLeft:80, display:'inline',color:'purple'}}>{data[i][16]}</div><div className="cityPrice" style={{display:'inline',color:'green', marginLeft:120}}>{data[i][17]}</div></div>);
-                  this.setState({
-                    showdata : this.displayData,
-                    postVal : "",
-                    textareaedit: false
-                  });
-
-                }
-              }
-
-            }//end of for loop Award Sale DEFAULTS
-
-      })//end of readXlsxFile for Sheet 4
     }
 
-
-
-
-
-
   }
+
 
   handleExceptionCodeChange = (idx) => (evt) => {
     let temp_code = evt.target.value ;
@@ -3180,6 +2292,7 @@ class App extends Component {
     });
   }
 
+
   handleExceptionTravelValid = (idx) => (evt) => {
     const newShareholders = this.state.exceptions.map((item, sidx) => {
       if (idx !== sidx) return item;
@@ -3192,6 +2305,7 @@ class App extends Component {
       exceptions: newShareholders
     });
   }
+
 
   handleExceptionServiceBegins = (idx) => (date) => {
     let temp_string = moment(date).format('YYYY-MM-DD');
@@ -3208,6 +2322,8 @@ class App extends Component {
       exceptions: newShareholders
     });
   }
+
+
   handleExceptionServiceEnds = (idx) => (date) => {
     let temp_string = moment(date).format('YYYY-MM-DD');
     const newShareholders = this.state.exceptions.map((item, sidx) => {
@@ -3223,8 +2339,6 @@ class App extends Component {
       exceptions: newShareholders
     });
   }
-
-
 
 
   handleAddException = () => {
@@ -3251,7 +2365,6 @@ class App extends Component {
   }
 
 
-
   travelFromToUSHandler = (date) => {
     let temp_string = moment(date).format('YYYY-MM-DD');
 
@@ -3260,6 +2373,8 @@ class App extends Component {
       travel_from_to_us_string: temp_string
     });
   }
+
+
   travelByToUSHandler = (date) => {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -3267,12 +2382,13 @@ class App extends Component {
       travel_by_to_us_string: temp_string
     });
   }
+
+
   daysAvailabilityToUSHandler = (e) => {
     this.setState({
       days_availability_to_us: e.target.value
     });
   }
-
 
 
   travelFromWithinAlaskaHandler = (date) => {
@@ -3283,6 +2399,9 @@ class App extends Component {
       travel_from_within_alaska_string: temp_string
     });
   }
+
+
+
   travelByWithinAlaskaHandler = (date) => {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -3290,6 +2409,8 @@ class App extends Component {
       travel_by_within_alaska_string: temp_string
     });
   }
+
+
   daysAvailabilityWithinAlaskaHandler = (e) => {
     this.setState({
       days_availability_within_alaska: e.target.value
@@ -3297,12 +2418,7 @@ class App extends Component {
   }
 
 
-
   render() {
-
-    // console.log(this.state.selectedOption);
-
-
 
     return (
       <div className="App">
@@ -3319,7 +2435,7 @@ class App extends Component {
             <div className="form-row sale-information">
                 <div className="row col-md-12">
                     <div className="form-group col-md-2">
-                      <h3 className="information-headline">Sale Information:</h3>
+                      <h3 className="information-headline">Sale Information v3:</h3>
                     </div>
                     <div className="form-group col-md-2">
                       {/* <a href="TEMPLATE.xlsx" download className="btn btn-success download-template">
@@ -3327,14 +2443,9 @@ class App extends Component {
                       </a> */
                       // https://alaskaair.sharepoint.com/sites/PublishedPricing/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FPublishedPricing%2FShared%20Documents%2FSales%2FDetail%20and%20Fare%20Dumps
                       }
-                      <a href="https://alaskaair.sharepoint.com/sites/PublishedPricing/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FPublishedPricing%2FShared%20Documents%2FSales%2FDetail%20and%20Fare%20Dumps" target="_blank" rel="noopener noreferrer" className="sharepoint-link">
-                          <i className="fa fa-upload"></i> DROP CSV FILES HERE
-                      </a>
                     </div>
                     <div className="form-group col-md-2">
-                      <a href="https://alaskaair.sharepoint.com/sites/TeamEP/Shared%20Documents/Forms/AllItems.aspx?cid=91ab9bff-77b0-4540-88d4-c8aacfe4cb04&RootFolder=%2Fsites%2FTeamEP%2FShared%20Documents%2F3-Campaigns%2FFare%20Sales%2FWeeklyFlightDeals&FolderCTID=0x012000B3CE6DC9828D0441B10382FB20A01BBC" rel="noopener noreferrer" target="_blank" className="sharepoint-link">
-                          <i className="fa fa-folder"></i> Sharepoint
-                      </a>
+
                     </div>
 
                     <div className="form-group col-md-1">
@@ -3598,84 +2709,6 @@ class App extends Component {
 
 
 
-              {/* CLUB 49 Information ROW */}
-              <div className="form-row club49-information">
-                  <div className="row col-md-12">
-                      <h3 className="information-headline">Club 49:</h3>
-                  </div>
-                  <div className="form-group col-md-3">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Travel From:</strong> To U.S.</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.travel_from_to_us} onChange={this.travelFromToUSHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-3">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Travel By:</strong> To U.S.</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.travel_by_to_us} onChange={this.travelByToUSHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-6">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Days Availability:</strong> To U.S.</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <input type="text" className="form-control" id="days_availability_to_us" value = {this.state.days_availability_to_us} onChange={this.daysAvailabilityToUSHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-3">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Travel From:</strong> Within Alaska</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.travel_from_within_alaska} onChange={this.travelFromWithinAlaskaHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-3">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Travel By:</strong> Within Alaska</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.travel_by_within_alaska} onChange={this.travelByWithinAlaskaHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-6">
-                      <div className="row col-md-12 individual-club49">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="club49-headline black-color"><strong>Days Availability:</strong> Within Alaska</h6>
-                        </div>
-                        <div className="col-md-12 remove-padding">
-                        <input type="text" className="form-control" id="days_availability_within_alaska" value = {this.state.days_availability_within_alaska} onChange={this.daysAvailabilityWithinAlaskaHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-              </div>
-
-
-
-
-
-
 
               {/* Blackout Information ROW */}
               <div className="form-row blackout-information">
@@ -3845,23 +2878,6 @@ class App extends Component {
                   <div className="form-group col-md-9">
                     <button style={{marginTop:'15px'}} type="submit" className="form-control btn btn-primary" id="generate-xml" >Generate XML</button>
                   </div>
-
-                  <div className="form-group col-md-3">
-                    <CSVLink
-                      data={saleDetailsHeaders}
-                      filename={this.state.mycsvsaledetailsfilename+".csv"}
-                      className="btn btn-warning csv-sale-details"
-                      target="_blank"
-                    ><i className="fa fa-download"></i> CSV Sale Details</CSVLink>
-
-                    <CSVLink
-                      data={saleFareHeaders}
-                      filename={this.state.mycsvfilename+".csv"}
-                      className="btn btn-warning csv-sale-fares"
-                      target="_blank"
-                    ><i className="fa fa-download"></i> CSV Fares</CSVLink>
-                  </div>
-
                 </div>
               </div>
             </form>
@@ -3894,57 +2910,11 @@ class App extends Component {
             </div>
 
 
-
-
-
-
-              {/* CLEAN MY XML ROW */}
-              {/* <div className="form-row club49-information">
-                  <div className="row col-md-12">
-                      <h3 className="information-headline">Clean My XML:</h3>
-                  </div>
-
-
-                  <div className="form-group col-md-12">
-                      <div className="row col-md-12 individual-club49">
-                          <div className="col-md-12">
-                          <button type="submit" className="btn btn-success clean-xml" onClick={this.cleanFile()}> <i className="fa fa-brush"></i> Clean XML</button>
-                          </div>
-
-                          <div className="row col-md-12">
-                          <div className="form-group col-md-12">
-
-                              <pre id="pre-xml-clean">
-                                    {JSON.toString(this.state.clean)}
-                              </pre>
-                          </div>
-                        </div>
-                      </div>
-
-                  </div>
-
-
-
-              </div> */}
-
-
-
-
-
-
-
-
         </div>
-
-
-
-
-
 
       </div>
       </div>
     );
-
 
 
 
