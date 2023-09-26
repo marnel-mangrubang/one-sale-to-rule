@@ -41,135 +41,135 @@ export function compareDestinationCode(a, b) {
 
 export function returnMyCityName(code) {
     return {
-        'ABQ' : 'Albuquerque',
-        'ACV' : 'Eureka',
-        'ADK' : 'Adak Island',
-        'ADQ' : 'Kodiak',
-        'AKN' : 'King Salmon',
-        'ALW' : 'Walla Walla',
-        'ANC' : 'Anchorage',
-        'ATL' : 'Atlanta',
-        'AUS' : 'Austin',
-        'BET' : 'Bethel',
-        'BIL' : 'Billings',
-        'BLI' : 'Bellingham',
-        'BNA' : 'Nashville',
-        'BOI' : 'Boise',
-        'BOS' : 'Boston',
-        'BRW' : 'Barrow',
-        'BUR' : 'Burbank',
-        'BWI' : 'Baltimore',
-        'BZN' : 'Bozeman',
-        'CDV' : 'Cordova',
-        'CHS' : 'Charleston',
-        'COS' : 'Colorado Springs',
-        'CUN' : 'Cancun',
-        'DCA' : 'Washington - Reagan',
-        'DEN' : 'Denver',
-        'DFW' : 'Dallas',
-        'DLG' : 'Dillingham',
-        'DTW' : 'Detroit',
-        'DUT' : 'Dutch Harbor',
-        'EAT' : 'Wenatchee',
-        'EUG' : 'Eugene',
-        'EWR' : 'New York - Newark',
-        'FAI' : 'Fairbanks',
-        'FAT' : 'Fresno',
-        'FCA' : 'Kalispell',
-        'FLG' : 'Flagstaff',
-        'FLL' : 'Ft Lauderdale',
-        'GDL' : 'Guadalajara',
-        'GEG' : 'Spokane',
-        'GTF' : 'Great Falls',
-        'GUC' : 'Gunnison County / Crested Butte',
-        'HDN' : 'Steamboat Springs',
-        'HLN' : 'Helena',
-        'HNL' : 'Honolulu',
-        'IAH' : 'Houston',
-        'IDA' : 'Idaho Falls',
-        'JFK' : 'New York - JFK',
-        'JNU' : 'Juneau',
-        'KOA' : 'Kona',
-        'KTN' : 'Ketchikan',
-        'LAP' : 'La Paz',
-        'LAS' : 'Las Vegas',
-        'LAX' : 'Los Angeles',
-        'LGB' : 'Long Beach',
-        'LIH' : 'Kauai',
-        'LIR' : 'Liberia, Costa Rica',
-        'LTO' : 'Loreto',
-        'MCI' : 'Kansas City',
-        'MCO' : 'Orlando',
-        'MEX' : 'Mexico City',
-        'MFR' : 'Medford',
-        'MIA' : 'Miami',
-        'MMH' : 'Mammoth Lakes',
-        'MRY' : 'Monterey',
-        'MSO' : 'Missoula',
-        'MSP' : 'Minneapolis',
-        'MSY' : 'New Orleans',
-        'MZT' : 'Mazatlan',
-        'OAK' : 'Oakland',
-        'OGG' : 'Maui',
-        'OKC' : 'Oklahoma City',
-        'OMA' : 'Omaha',
-        'OME' : 'Nome',
-        'ONT' : 'Ontario',
-        'ORD' : 'Chicago',
-        'OTZ' : 'Kotzebue',
-        'PDX' : 'Portland',
-        'PHL' : 'Philadelphia',
-        'PHX' : 'Phoenix',
-        'PRC' : 'Prescott',
-        'PSC' : 'Pasco',
-        'PSG' : 'Petersburg',
-        'PSP' : 'Palm Springs',
-        'PUW' : 'Pullman',
-        'PVR' : 'Puerto Vallarta',
-        'RDD' : 'Redding',
-        'RDM' : 'Redmond',
-        'RDU' : 'Raleigh-Durham',
-        'RNO' : 'Reno',
-        'SAN' : 'San Diego',
-        'SAT' : 'San Antonio',
-        'SBA' : 'Santa Barbara',
-        'SCC' : 'Prudhoe Bay',
-        'SEA' : 'Seattle',
-        'SFO' : 'San Francisco',
-        'SIT' : 'Sitka',
-        'SJC' : 'San Jose',
-        'SJD' : 'Los Cabos',
-        'SJO' : 'San Jose, Costa Rica',
-        'SLC' : 'Salt Lake City',
-        'SMF' : 'Sacramento',
-        'SNA' : 'Orange County',
-        'STL' : 'St Louis',
-        'STS' : 'Santa Rosa',
-        'SUN' : 'Sun Valley',
-        'TPA' : 'Tampa',
-        'TUS' : 'Tucson',
-        'WRG' : 'Wrangell',
-        'YAK' : 'Yakutat',
-        'YEG' : 'Edmonton',
-        'YKM' : 'Yakima',
-        'YLW' : 'Kelowna',
-        'YVR' : 'Vancouver',
-        'YYC' : 'Calgary',
-        'YYJ' : 'Victoria',
-        'ZIH' : 'Ixtapa',
-        'ZLO' : 'Manzanillo',
-        'MKE' : 'Milwaukee',
-        'HAV' : 'Havana',
-        'ICT' : 'Wichita',
-        'IND' : 'Indianapolis',
-        'SBP' : 'San Luis Obispo',
-        'DAL' : 'Dallas - Love Field',
-        'LGA' : 'New York - LaGuardia',
-        'IAD' : 'Washington D.C. - Dulles',
-        'PIT' : 'Pittsburgh',
-        'PAE' : 'Everett / Paine Field',
-        'ELP' : 'El Paso',
-        'CMH' : 'Columbus',
+        'ABQ': 'Albuquerque',
+        'ACV': 'Eureka',
+        'ADK': 'Adak Island',
+        'ADQ': 'Kodiak',
+        'AKN': 'King Salmon',
+        'ALW': 'Walla Walla',
+        'ANC': 'Anchorage',
+        'ATL': 'Atlanta',
+        'AUS': 'Austin',
+        'BET': 'Bethel',
+        'BIL': 'Billings',
+        'BLI': 'Bellingham',
+        'BNA': 'Nashville',
+        'BOI': 'Boise',
+        'BOS': 'Boston',
+        'BRW': 'Barrow',
+        'BUR': 'Burbank',
+        'BWI': 'Baltimore',
+        'BZN': 'Bozeman',
+        'CDV': 'Cordova',
+        'CHS': 'Charleston',
+        'COS': 'Colorado Springs',
+        'CUN': 'Cancun',
+        'DCA': 'Washington - Reagan',
+        'DEN': 'Denver',
+        'DFW': 'Dallas',
+        'DLG': 'Dillingham',
+        'DTW': 'Detroit',
+        'DUT': 'Dutch Harbor',
+        'EAT': 'Wenatchee',
+        'EUG': 'Eugene',
+        'EWR': 'New York - Newark',
+        'FAI': 'Fairbanks',
+        'FAT': 'Fresno',
+        'FCA': 'Kalispell',
+        'FLG': 'Flagstaff',
+        'FLL': 'Ft Lauderdale',
+        'GDL': 'Guadalajara',
+        'GEG': 'Spokane',
+        'GTF': 'Great Falls',
+        'GUC': 'Gunnison County / Crested Butte',
+        'HDN': 'Steamboat Springs',
+        'HLN': 'Helena',
+        'HNL': 'Honolulu',
+        'IAH': 'Houston',
+        'IDA': 'Idaho Falls',
+        'JFK': 'New York - JFK',
+        'JNU': 'Juneau',
+        'KOA': 'Kona',
+        'KTN': 'Ketchikan',
+        'LAP': 'La Paz',
+        'LAS': 'Las Vegas',
+        'LAX': 'Los Angeles',
+        'LGB': 'Long Beach',
+        'LIH': 'Kauai',
+        'LIR': 'Liberia, Costa Rica',
+        'LTO': 'Loreto',
+        'MCI': 'Kansas City',
+        'MCO': 'Orlando',
+        'MEX': 'Mexico City',
+        'MFR': 'Medford',
+        'MIA': 'Miami',
+        'MMH': 'Mammoth Lakes',
+        'MRY': 'Monterey',
+        'MSO': 'Missoula',
+        'MSP': 'Minneapolis',
+        'MSY': 'New Orleans',
+        'MZT': 'Mazatlan',
+        'OAK': 'Oakland',
+        'OGG': 'Maui',
+        'OKC': 'Oklahoma City',
+        'OMA': 'Omaha',
+        'OME': 'Nome',
+        'ONT': 'Ontario',
+        'ORD': 'Chicago',
+        'OTZ': 'Kotzebue',
+        'PDX': 'Portland',
+        'PHL': 'Philadelphia',
+        'PHX': 'Phoenix',
+        'PRC': 'Prescott',
+        'PSC': 'Pasco',
+        'PSG': 'Petersburg',
+        'PSP': 'Palm Springs',
+        'PUW': 'Pullman',
+        'PVR': 'Puerto Vallarta',
+        'RDD': 'Redding',
+        'RDM': 'Redmond',
+        'RDU': 'Raleigh-Durham',
+        'RNO': 'Reno',
+        'SAN': 'San Diego',
+        'SAT': 'San Antonio',
+        'SBA': 'Santa Barbara',
+        'SCC': 'Prudhoe Bay',
+        'SEA': 'Seattle',
+        'SFO': 'San Francisco',
+        'SIT': 'Sitka',
+        'SJC': 'San Jose',
+        'SJD': 'Los Cabos',
+        'SJO': 'San Jose, Costa Rica',
+        'SLC': 'Salt Lake City',
+        'SMF': 'Sacramento',
+        'SNA': 'Orange County',
+        'STL': 'St Louis',
+        'STS': 'Santa Rosa',
+        'SUN': 'Sun Valley',
+        'TPA': 'Tampa',
+        'TUS': 'Tucson',
+        'WRG': 'Wrangell',
+        'YAK': 'Yakutat',
+        'YEG': 'Edmonton',
+        'YKM': 'Yakima',
+        'YLW': 'Kelowna',
+        'YVR': 'Vancouver',
+        'YYC': 'Calgary',
+        'YYJ': 'Victoria',
+        'ZIH': 'Ixtapa',
+        'ZLO': 'Manzanillo',
+        'MKE': 'Milwaukee',
+        'HAV': 'Havana',
+        'ICT': 'Wichita',
+        'IND': 'Indianapolis',
+        'SBP': 'San Luis Obispo',
+        'DAL': 'Dallas - Love Field',
+        'LGA': 'New York - LaGuardia',
+        'IAD': 'Washington D.C. - Dulles',
+        'PIT': 'Pittsburgh',
+        'PAE': 'Everett / Paine Field',
+        'ELP': 'El Paso',
+        'CMH': 'Columbus',
     }[code]
 }
 
@@ -182,54 +182,45 @@ export function returnMyCityName(code) {
 // fare_type:data[i][5],
 
 export function mergeObjects(arr) {
-  var resultArray = [];
-  var urls = [];
+    var resultArray = [];
+    var urls = [];
 
-  for(var item in arr){
-    var itemIndex = urls.indexOf(arr[item].name);
-    if(itemIndex === -1){
-      urls.push(arr[item].name);
-      var obj = {};
-      obj.name = arr[item].name;
-      obj.origin_code = arr[item].origin_code;
-      obj.origin_city = arr[item].origin_city;
-      obj.destination_code = arr[item].destination_code;
-      obj.destination_city = arr[item].destination_city;
-      obj.default = arr[item].default;
-      obj.group = arr[item].group;
+    for (var item in arr) {
+        var itemIndex = urls.indexOf(arr[item].name);
+        if (itemIndex === -1) {
+            urls.push(arr[item].name);
+            var obj = {};
+            obj.name = arr[item].name;
+            obj.origin_code = arr[item].origin_code;
+            obj.origin_city = arr[item].origin_city;
+            obj.destination_code = arr[item].destination_code;
+            obj.destination_city = arr[item].destination_city;
+            obj.default = arr[item].default;
+            obj.group = arr[item].group;
 
-      obj.price_types = [];
-      var variationData = {};
-      variationData.id = arr[item].id;
-      if(arr[item].fare_type !== undefined){
-        variationData.fare_type = arr[item].fare_type;
-      }
-      if(arr[item].price !== undefined){
-        variationData.price = arr[item].price;
-      }
+            obj.price_types = [];
+            var variationData = {};
+            variationData.id = arr[item].id;
 
-      if(arr[item].taxes !== undefined){
-        variationData.taxes = arr[item].taxes;
-      }
+            variationData.fare_type = arr[item].fare_type;
+            variationData.price = arr[item].price;
+            variationData.taxes = arr[item].taxes;
 
-     
-      obj.price_types.push(variationData);
-      resultArray.push(obj);
 
-    }else{
-      variationData = {};
-      variationData.id = arr[item].id;
-      if(arr[item].fare_type !== undefined){
-        variationData.fare_type = arr[item].fare_type;
-      }
-      if(arr[item].price !== undefined){
-        variationData.price = arr[item].price;
-      }
-      resultArray[itemIndex].price_types.push(variationData)
+            obj.price_types.push(variationData);
+            resultArray.push(obj);
+
+        } else {
+            variationData = {};
+            variationData.id = arr[item].id;
+            variationData.fare_type = arr[item].fare_type;
+            variationData.price = arr[item].price;
+            variationData.taxes = arr[item].taxes;
+            resultArray[itemIndex].price_types.push(variationData)
+        }
+
     }
-    
-  }
-  return resultArray;
+    return resultArray;
 }
 
 
@@ -250,20 +241,20 @@ export function makeDateMonthInEnglish(date_passed) {
 
 export function getMyDay(date_passed) {
     var day = date_passed.getDate();
-    if(day < 10){
-        day = '0'+day;
+    if (day < 10) {
+        day = '0' + day;
         return day;
-    }else{
+    } else {
         return day;
     }
 }
 
 export function getMyMonth(date_passed) {
     var month = date_passed.getMonth() + 1;
-    if(month < 10){
-        month = '0'+month;
+    if (month < 10) {
+        month = '0' + month;
         return month;
-    }else{
+    } else {
         return month;
     }
 }
@@ -287,112 +278,38 @@ export function getMyMinute(date_passed) {
 
 export function getMyTimeOfDay(date_passed) {
     var hour = date_passed.getHours();
-    if (hour < 12){
+    if (hour < 12) {
         return "AM";
-    }else{
+    } else {
         return "PM";
-    } 
+    }
 }
 
 
 export function groupMeByOrigin(code) {
-    let alaska_only_codes = ["ADK","ANC","BRW","BET","CDV","DLG","DUT","FAI","GST","JNU","KTN","AKN","ADQ","OTZ","OME","PSG","SCC","SIT","WRG","YAK"];
-    let hawaii_only_codes = ["OGG","LIH","KOA","HNL"];
-    let florida_only_codes = ["FLL","MCO","MIA","TPA"];
-    let mexico_only_codes = ["MEX","CUN","GDL","LTO","SJD","ZLO","MZT","PVR","ZIH"];
-    let costa_rica_only_codes = ["LIR","SJO","HAV"];
+    let alaska_only_codes = ["ADK", "ANC", "BRW", "BET", "CDV", "DLG", "DUT", "FAI", "GST", "JNU", "KTN", "AKN", "ADQ", "OTZ", "OME", "PSG", "SCC", "SIT", "WRG", "YAK"];
+    let hawaii_only_codes = ["OGG", "LIH", "KOA", "HNL"];
+    let florida_only_codes = ["FLL", "MCO", "MIA", "TPA"];
+    let mexico_only_codes = ["MEX", "CUN", "GDL", "LTO", "SJD", "ZLO", "MZT", "PVR", "ZIH"];
+    let costa_rica_only_codes = ["LIR", "SJO", "HAV"];
     let pae_only_codes = ["PAE"];
 
-    if(alaska_only_codes.indexOf(code) > -1){
+    if (alaska_only_codes.indexOf(code) > -1) {
         return "ALASKA";
-    }else if(hawaii_only_codes.indexOf(code) > -1){
+    } else if (hawaii_only_codes.indexOf(code) > -1) {
         return "HAWAII";
-    }else if(florida_only_codes.indexOf(code) > -1){
+    } else if (florida_only_codes.indexOf(code) > -1) {
         return "FLORIDA";
-    }else if(mexico_only_codes.indexOf(code) > -1){
+    } else if (mexico_only_codes.indexOf(code) > -1) {
         return "MEXICO";
-    }else if(costa_rica_only_codes.indexOf(code) > -1){
+    } else if (costa_rica_only_codes.indexOf(code) > -1) {
         return "COSTA_RICA";
-    }else if(pae_only_codes.indexOf(code) > -1){
+    } else if (pae_only_codes.indexOf(code) > -1) {
         return "PAE";
-    }else{
+    } else {
         return "OTHER_MARKET";
     }
 }
-
-export function mergeClub49(arr) {
-    var resultArray = [];
-    var urls = [];
-  
-    for(var item in arr){
-      var itemIndex = urls.indexOf(arr[item].group);
-      if(itemIndex === -1){
-        urls.push(arr[item].group);
-        var obj = {};
-        obj.group = arr[item].group;
-        
-
-        obj.upper_lower = [];
-        var variationData = {};
-        variationData.id = arr[item].id;
-        if(arr[item].origin_code !== undefined){
-            variationData.origin_code = arr[item].origin_code;
-        }
-        if(arr[item].origin_city !== undefined){
-            variationData.origin_city = arr[item].origin_city;
-        }
-        if(arr[item].destination_code !== undefined){
-            variationData.destination_code = arr[item].destination_code;
-        }
-        if(arr[item].destination_city !== undefined){
-            variationData.destination_city = arr[item].destination_city;
-        }
-        if(arr[item].name !== undefined){
-            variationData.name = arr[item].name;
-        }
-        if(arr[item].default !== undefined){
-            variationData.default = arr[item].default;
-        }
-        if(arr[item].price !== undefined){
-        variationData.price = arr[item].price;
-        }
-
-       
-        obj.upper_lower.push(variationData);
-        resultArray.push(obj);
-
-  
-      }else{
-        variationData = {};
-        variationData.id = arr[item].id;
-
-        if(arr[item].origin_code !== undefined){
-          variationData.origin_code = arr[item].origin_code;
-        }
-        if(arr[item].origin_city !== undefined){
-            variationData.origin_city = arr[item].origin_city;
-        }
-        if(arr[item].destination_code !== undefined){
-            variationData.destination_code = arr[item].destination_code;
-        }
-        if(arr[item].destination_city !== undefined){
-            variationData.destination_city = arr[item].destination_city;
-        }
-        if(arr[item].name !== undefined){
-            variationData.name = arr[item].name;
-        }
-        if(arr[item].default !== undefined){
-            variationData.default = arr[item].default;
-        }
-        if(arr[item].price !== undefined){
-          variationData.price = arr[item].price;
-        }
-        resultArray[itemIndex].upper_lower.push(variationData)
-      }
-      
-    }
-    return resultArray;
-  }
 
 
 export function getMyFirstTuesday(date, dayOfWeek) {
