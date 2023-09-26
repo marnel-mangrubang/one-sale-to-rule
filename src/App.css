@@ -34,7 +34,7 @@
 .detailsForm label{
   margin-top:10px;
   margin-bottom:-3px !important;
-  font-size:10px !important;
+  font-size:16px !important;
 }
 input{
   width:100% !important;
@@ -56,16 +56,13 @@ h6.proposed-headline{
   margin-top:34px;
 }
 
-.information-headline{
-  padding:0 15px;
-}
-.form-row.sale-information{
-  background-color:#e9e4e4;
-}
+
+
 
 .form-row.blackout-information{
   background-color:#d2d2d2;
-  padding-top:10px;
+  margin:10px;
+  border-radius: 5px;
 }
 .form-row.club49-information{
   background-color:#fff;
@@ -136,53 +133,6 @@ h6.proposed-headline{
 }
 
 
-/* .form-group-input {
-  padding: 1em;
-  margin: 1em;
-} */
-
-/* input[type=file] {
-  outline: 0;
-  opacity: 0;
-  pointer-events: none;
-  user-select: none;
-} */
-
-/* .form-group-input .label {
-  width: 100%;
-  border: 1px dashed #898787;
-  border-radius: 2px;
-  display: block;
-  padding: 0em;
-  transition: border 300ms ease;
-  cursor: pointer;
-  text-align: center;
-}
-.form-group-input .label i {
-  display: inline-block;
-  font-size: 25px;
-  padding-top: 10px;
-}
-.form-group-input .label i{
-  color: #898787;
-  transition: 200ms color;
-  font-size:35px;
-}
-.form-group-input .label .title {
-  color: #898787;
-  transition: 200ms color;
-  font-size:25px;
-  position: absolute;
-  margin-top:16px;
-}
-.form-group-input .label:hover {
-  border: 1px solid #898787;
-}
-.form-group-input .label:hover i,
-.form-group-input .label:hover .title {
-  color: #585656;
-} */
-
 #inputFile,
 #cleanFile{
   margin-top:10px;
@@ -197,6 +147,7 @@ h6.proposed-headline{
   white-space: pre-wrap;
   font-size:11px;
   height:100%;
+  border-radius: 5px;
 }
 
 #pre-xml-clean{
@@ -209,9 +160,11 @@ h6.proposed-headline{
   height:100%;
 }
 .output-information{
-  width:101%;
+  width:100%;
   height:100%;
-  background-color:#7aa4bc;
+  background-color:#7aa4bc7d;
+  margin: 20px 0px;
+  border-radius:5px;
 }
 
 .btn.btn-success.copy-to-clipboard{
@@ -220,6 +173,10 @@ h6.proposed-headline{
   border-color: #38a6da;
   box-shadow: 0 0 1px 0 rgba(0,0,0,.35);
   margin-top:20px;
+  border-radius: 5px;
+}
+.btn.btn-success.copy-to-clipboard:hover{
+  background-color:#1b4e66;
 }
 
 .btn.btn-success.clean-xml{
@@ -234,6 +191,10 @@ h6.proposed-headline{
   padding:2px 10px;
   margin-top:20px;
   border-color:#e17329;
+  border-radius: 5px;
+}
+.btn.btn-warning.copy-to-clipboard:hover{
+  background-color:#6b3714;
 }
 
 #generate-xml{
@@ -266,4 +227,239 @@ h6.proposed-headline{
   margin-top:20px;
   background-color:#26dace;
   border-color:#26dace;
+}
+
+/* NEW STLYING */
+.file_select_grid{
+  background-color: #daff2f21;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 10px;
+  padding: 20px;
+}
+.date_inputs_grid{
+  background-color:#5819ea14;
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 10px;
+  padding: 20px;
+  grid-template-areas: 
+  "sale_start"
+  "purchase_by"
+  "advance_purchase"
+  "default_markets"
+  "travel_start_alaska_to_from_hawaii"
+  "travel_end_alaska_to_from_hawaii"
+  "days_availability_alaska_to_from_hawaii"
+  "travel_start_hawaii"
+  "travel_end_hawaii"
+  "days_availability_hawaii"
+  "travel_start_mexico"
+  "travel_end_mexico"
+  "days_availability_mexico"
+  "travel_start_costa_rica"
+  "travel_end_costa_rica"
+  "days_availability_costa_rica"
+  "travel_start_florida"
+  "travel_end_florida"
+  "days_availability_to_florida"
+  "days_availability_from_florida"
+  "travel_start_others"
+  "travel_end_others"
+  "days_availability_others";
+}
+
+.proposed_dates_pae,
+.proposed_dates_hawaii,
+.proposed_dates_others {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  width: 100%;
+  gap: 10px;
+  padding: 20px;
+}
+
+.proposed_dates_pae{
+  background-color: #ff000021;
+}
+.proposed_dates_hawaii {
+  background-color: #ffa5002b;
+}
+.proposed_dates_others {
+  background-color: rgb(17 137 153 / 28%);
+}
+
+
+
+
+.sale-information{
+  background-color:#bcaa9940;
+  margin:30px 10px;
+  border-radius: 5px;
+  border:1px solid #bcaa99;
+}
+.sale-information label{
+  font-size: 16px !important;
+}
+.information-headline{
+  font-size: 36px;
+  font-weight: 400;
+}
+input.form-control {
+  border-radius: 5px !important;
+}
+#inputFile{
+  background-color:#cb168285;
+  border: 1px solid 1px solid #386f81;
+}
+.file_input_grid{
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  height: 200px;
+}
+
+
+
+.sale_information{
+  display: grid;
+  grid-template-columns: 1fr;
+  width: 100%;
+  gap: 10px;
+}
+
+@media screen and (min-width: 768px) {
+  .file_select_grid{
+    grid-template-columns: 3fr 1fr 0.5fr;
+    gap: 30px;
+  }
+  .sale_information{
+    grid-template-columns: 1fr 1fr;
+    gap: 30px;
+  }
+
+  .date_inputs_grid {
+    grid-template-columns: 1fr 1fr 1fr 1fr;
+    gap: 30px;
+    grid-template-areas: 
+    "sale_start travel_start_alaska_to_from_hawaii travel_end_alaska_to_from_hawaii days_availability_alaska_to_from_hawaii"
+    "purchase_by travel_start_hawaii travel_end_hawaii days_availability_hawaii"
+    "advance_purchase travel_start_mexico travel_end_mexico days_availability_mexico"
+    "default_markets travel_start_costa_rica travel_end_costa_rica days_availability_costa_rica"
+    "default_markets travel_start_florida travel_end_florida days_availability_to_florida"
+    "default_markets travel_start_florida travel_end_florida days_availability_from_florida"
+    "default_markets travel_start_others travel_end_others days_availability_others";
+  }
+}
+
+
+.generate_xml,
+.generate_json {
+  padding: 20px 50px;
+  border: none;
+  width: 100%;
+  border-radius: 5px;
+  border: 1px solid #c9c9c9;
+  margin: 10px 0;
+  font-size:30px;
+  cursor: pointer;
+  color: white;
+  letter-spacing: 1px;
+}
+
+.generate_xml span,
+.generate_json span {
+  font-weight: 700;
+}
+
+.generate_xml{
+  background-color: #c202f4;
+}
+.generate_xml.disabled{
+  background-color: #c202f426;
+}
+.generate_xml.enabled:hover {
+  background-color:#70008d;
+}
+.generate_json{
+  background-color: #0d9472;
+}
+.generate_json.disabled{
+  background-color: #0d94723b;
+}
+.generate_json.enabled:hover {
+  background-color: #085541;
+}
+
+
+.sale_start{
+  grid-area: sale_start;
+}
+.purchase_by{
+  grid-area: purchase_by;
+}
+.advance_purchase{
+  grid-area: advance_purchase;
+}
+.default_markets{
+  grid-area: default_markets;
+}
+.travel_start_alaska_to_from_hawaii{
+  grid-area: travel_start_alaska_to_from_hawaii;
+}
+.travel_end_alaska_to_from_hawaii{
+  grid-area: travel_end_alaska_to_from_hawaii;
+}
+.days_availability_alaska_to_from_hawaii{
+  grid-area: days_availability_alaska_to_from_hawaii;
+}
+.travel_start_hawaii{
+  grid-area: travel_start_hawaii;
+}
+.travel_end_hawaii{
+  grid-area: travel_end_hawaii;
+}
+.days_availability_hawaii{
+  grid-area: days_availability_hawaii;
+}
+.travel_start_mexico{
+  grid-area: travel_start_mexico;
+}
+.travel_end_mexico{
+  grid-area: travel_end_mexico;
+}
+.days_availability_mexico{
+  grid-area: days_availability_mexico;
+}
+.travel_start_costa_rica{
+  grid-area: travel_start_costa_rica;
+}
+.travel_end_costa_rica{
+  grid-area: travel_end_costa_rica;
+}
+.days_availability_costa_rica{
+  grid-area: days_availability_costa_rica;
+}
+.travel_start_florida{
+  grid-area: travel_start_florida;
+}
+.travel_end_florida{
+  grid-area: travel_end_florida;
+}
+.days_availability_to_florida{
+  grid-area: days_availability_to_florida;
+}
+.days_availability_from_florida{
+  grid-area: days_availability_from_florida;
+}
+.travel_start_others{
+  grid-area: travel_start_others;
+}
+.travel_end_others{
+  grid-area: travel_end_others;
+}
+.days_availability_others{
+  grid-area: days_availability_others;
 }

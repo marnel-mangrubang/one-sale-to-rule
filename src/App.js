@@ -5,9 +5,24 @@ import builder from 'xmlbuilder';
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import moment from "moment";
-import {CopyToClipboard} from 'react-copy-to-clipboard';
-import { comparePrice, compareOriginCode, compareDestinationCode, returnMyCityName, mergeObjects, makeDateMonthInEnglish, getMyDay, getMyMonth, getMyYear, getMyHour, getMyMinute, getMyTimeOfDay, groupMeByOrigin, getMyFirstTuesday, getMySecondTuesday } from './Helper/Helper';
-import XMLParser from 'react-xml-parser';
+import { CopyToClipboard } from 'react-copy-to-clipboard';
+import {
+  comparePrice,
+  compareOriginCode,
+  compareDestinationCode,
+  returnMyCityName,
+  mergeObjects,
+  makeDateMonthInEnglish,
+  getMyDay,
+  getMyMonth,
+  getMyYear,
+  getMyHour,
+  getMyMinute,
+  getMyTimeOfDay,
+  groupMeByOrigin,
+  getMyFirstTuesday,
+  getMySecondTuesday
+} from './Helper/Helper';
 
 
 const city_caps_conversion = [
@@ -666,7 +681,7 @@ const city_caps_conversion = [
     Airport_Code: "ZLO",
     City_Name: "Manzanillo"
   }
- ];
+];
 
 
 
@@ -675,15 +690,14 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      hidden_sheet : 4,
-      selectedOption:'Saver',
-      xmloutput: '',
+      hidden_sheet: 4,
+      finalOutput: '',
       copied: false,
       all_my_fares: [],
       default_markets: [],
       combined_saver_and_main: [],
-      exceptions: [{ code_origin: '', code_destination: '', travel_valid: '', service_begins: null, service_ends: null, begins_string:'', ends_string:'' }],
-      pulled_exception_fares:[],
+      exceptions: [{ code_origin: '', code_destination: '', travel_valid: '', service_begins: null, service_ends: null, begins_string: '', ends_string: '' }],
+      pulled_exception_fares: [],
       firstinput: 'Initial data...',
       advance_purchase: '',
       sale_start_date: null,
@@ -745,50 +759,52 @@ class App extends Component {
       days_availability_others: 'Tuesdays, Wednesdays, and Saturdays',
 
 
-      proposed_start_pae:null,
+      proposed_start_pae: null,
       proposed_start_pae_string: '',
-      proposed_end_pae:null,
+      proposed_end_pae: null,
       proposed_end_pae_string: '',
-      proposed_start_hawaii:null,
+      proposed_start_hawaii: null,
       proposed_start_hawaii_string: '',
-      proposed_end_hawaii:null,
+      proposed_end_hawaii: null,
       proposed_end_hawaii_string: '',
-      proposed_start_others:null,
+      proposed_start_others: null,
       proposed_start_others_string: '',
-      proposed_end_others:null,
+      proposed_end_others: null,
       proposed_end_others_string: '',
 
 
-      blackout_start_alaska_to_from_hawaii:null,
+      blackout_start_alaska_to_from_hawaii: null,
       blackout_start_alaska_to_from_hawaii_string: '',
-      blackout_end_alaska_to_from_hawaii:null,
+      blackout_end_alaska_to_from_hawaii: null,
       blackout_end_alaska_to_from_hawaii_string: '',
-      blackout_start_to_hawaii:null,
+      blackout_start_to_hawaii: null,
       blackout_start_to_hawaii_string: '',
-      blackout_end_to_hawaii:null,
+      blackout_end_to_hawaii: null,
       blackout_end_to_hawaii_string: '',
-      blackout_start_from_hawaii:null,
+      blackout_start_from_hawaii: null,
       blackout_start_from_hawaii_string: '',
-      blackout_end_from_hawaii:null,
+      blackout_end_from_hawaii: null,
       blackout_end_from_hawaii_string: '',
-      blackout_start_mexico:null,
+      blackout_start_mexico: null,
       blackout_start_mexico_string: '',
-      blackout_end_mexico:null,
+      blackout_end_mexico: null,
       blackout_end_mexico_string: '',
-      blackout_start_costa_rica:null,
+      blackout_start_costa_rica: null,
       blackout_start_costa_rica_string: '',
-      blackout_end_costa_rica:null,
+      blackout_end_costa_rica: null,
       blackout_end_costa_rica_string: '',
-      blackout_start_others:null,
+      blackout_start_others: null,
       blackout_start_others_string: '',
-      blackout_end_others:null,
+      blackout_end_others: null,
       blackout_end_others_string: '',
 
-      showdata : this.displayData,
-      postVal : "",
+      showdata: this.displayData,
+      postVal: "",
       textareaedit: true,
       sale_type: '',
-      sale_objective: ''
+      sale_objective: '',
+      jsonOutput: [],
+      isDisabled: true
     }
 
     this.displayData = [];
@@ -801,7 +817,10 @@ class App extends Component {
 
     this.updateFirstInput = this.updateFirstInput.bind(this);
 
-    this.createSaleDetails = this.createSaleDetails.bind(this);
+    // this.createSaleDetails = this.createSaleDetails.bind(this);
+
+    this.createMyXmlHandler = this.createMyXmlHandler.bind(this);
+    this.createMyJSONHandler = this.createMyJSONHandler.bind(this);
 
     this.saleStartDateHandler = this.saleStartDateHandler.bind(this);
     this.saleEndDateHandler = this.saleEndDateHandler.bind(this);
@@ -854,54 +873,30 @@ class App extends Component {
 
   }
 
-  componentDidMount(){
-    // fetch('https://resource.alaskaair.net/-/media/files/deals/qa-files/qa-winter-sale')
-    // .then(response => response.text())
-    // .then((response) => {
-
-    //     var xml = new XMLParser().parseFromString(response);    // Assume xmlText contains the example XML
-
-    //     //console.log(xml);
-    //     //console.log(xml.getElementsByTagName('TravelDates'));
-    //     let deal_set_elem = xml.getElementsByTagName('DealSet');
-
-    //     this.setState({
-    //       xml_response: deal_set_elem
-    //     });
-
-
-
-    // }).catch((err) => {
-    //     console.log('fetch', err)
-    // })
+  componentDidMount() {
 
   }
-
-
 
 
   updateFirstInput(e) {
-    this.setState({firstinput: e.target.value});
+    this.setState({ firstinput: e.target.value });
   }
 
-  markAsDefault(def_market){
+
+  markAsDefault(def_market) {
 
     let array_all_combined_prices = [...this.state.combined_saver_and_main];
 
     this.state.combined_saver_and_main.some((item) => {
-      if(def_market === item.name && item.default !== true){
-        // if(item.default === false){
-          let index = array_all_combined_prices.indexOf(item);
-          // console.log(index + " " + item.name);
-          if (index !== -1) {
-            item['default'] = true;
-          }
-        // }
+      if (def_market === item.name && item.default !== true) {
+        let index = array_all_combined_prices.indexOf(item);
+        if (index !== -1) {
+          item['default'] = true;
+        }
       }
     });
 
   }
-
 
 
   saveDefaultMarkets(e) {
@@ -911,7 +906,7 @@ class App extends Component {
 
     const new_defaults = temp_val.map((item) => {
 
-      let split_market_and_price = item.replace(/\s/g,'');
+      let split_market_and_price = item.replace(/\s/g, '');
       split_market_and_price = split_market_and_price.match(/.{1,6}/g);
       return {
         default_market: split_market_and_price[0],
@@ -931,19 +926,12 @@ class App extends Component {
   }
 
 
-
-
-
   grabDefaultsFromSheet(pair, price) {
-
-    // let temp_pair = pair;
-    // let temp_price = price;
     let new_defaults = [];
     let temp_obj = {
       default_market: pair,
       default_price: price
     }
-
 
     //let new_defaults.push(temp_obj);
 
@@ -960,9 +948,6 @@ class App extends Component {
   }
 
 
-
-
-
   saleStartDateHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
 
@@ -972,8 +957,6 @@ class App extends Component {
     });
   }
 
-
-
   saleEndDateHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -982,13 +965,11 @@ class App extends Component {
     });
   }
 
-
   advancePurchaseHandler(e) {
     this.setState({
       advance_purchase: e.target.value
     });
   }
-
 
   travelStartAlaskaToFromHawaiiDateHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
@@ -997,6 +978,7 @@ class App extends Component {
       travel_start_alaska_to_from_hawaii_string: temp_string
     });
   }
+
   travelStartHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1004,6 +986,7 @@ class App extends Component {
       travel_start_hawaii_string: temp_string
     });
   }
+
   travelStartMexicoHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1011,6 +994,7 @@ class App extends Component {
       travel_start_mexico_string: temp_string
     });
   }
+
   travelStartCostaRicaHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1018,10 +1002,7 @@ class App extends Component {
       travel_start_costa_rica_string: temp_string
     });
   }
-  // travelStartFloridaHandler(date) {
-  //   this.setState({travel_start_florida: moment(date).format('YYYY-MM-DD')});
-  //   console.log("Travel Start Date - Florida: "+moment(date).format('YYYY-MM-DD'));
-  // }
+
   travelStartOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1033,8 +1014,6 @@ class App extends Component {
   }
 
 
-
-
   travelEndAlaskaToFromHawaiiDateHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1042,6 +1021,7 @@ class App extends Component {
       travel_end_alaska_to_from_hawaii_string: temp_string
     });
   }
+
   travelEndHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1049,6 +1029,7 @@ class App extends Component {
       travel_end_hawaii_string: temp_string
     });
   }
+
   travelEndMexicoHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1056,6 +1037,7 @@ class App extends Component {
       travel_end_mexico_string: temp_string
     });
   }
+
   travelEndCostaRicaHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1063,10 +1045,7 @@ class App extends Component {
       travel_end_costa_rica_string: temp_string,
     });
   }
-  // travelEndFloridaHandler(date) {
-  //   this.setState({travel_end_florida: moment(date).format('YYYY-MM-DD')});
-  //   console.log("Completed Travel By - Florida: "+moment(date).format('YYYY-MM-DD'));
-  // }
+
   travelEndOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1077,39 +1056,41 @@ class App extends Component {
     });
   }
 
-
-
   daysAvailabilityHawaiiHandler(e) {
     this.setState({
       days_availability_hawaii: e.target.value
     });
   }
+
   daysAvailabilityMexicoHandler(e) {
     this.setState({
       days_availability_mexico: e.target.value
     });
   }
+
   daysAvailabilityCostaRicaHandler(e) {
     this.setState({
       days_availability_costa_rica: e.target.value
     });
   }
+
   daysAvailabilityToFloridaHandler(e) {
     this.setState({
       days_availability_to_florida: e.target.value
     });
   }
+
   daysAvailabilityFromFloridaHandler(e) {
     this.setState({
       days_availability_from_florida: e.target.value
     });
   }
+
   daysAvailabilityOthersHandler(e) {
     this.setState({
       days_availability_others: e.target.value
     });
   }
-
 
   proposedStartDatePAEHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
@@ -1118,6 +1099,7 @@ class App extends Component {
       proposed_start_pae_string: temp_string
     });
   }
+
   proposedEndDatePAEHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1133,6 +1115,7 @@ class App extends Component {
       proposed_start_hawaii_string: temp_string
     });
   }
+
   proposedEndDateHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1140,6 +1123,7 @@ class App extends Component {
       proposed_end_hawaii_string: temp_string
     });
   }
+
   proposedStartDateOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1147,6 +1131,7 @@ class App extends Component {
       proposed_start_others_string: temp_string
     });
   }
+
   proposedEndDateOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1155,9 +1140,6 @@ class App extends Component {
     });
   }
 
-
-
-
   blackoutStartDateAlaskaToFromHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1165,6 +1147,7 @@ class App extends Component {
       blackout_start_alaska_to_from_hawaii_string: temp_string
     });
   }
+
   blackoutEndDateAlaskaToFromHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1172,6 +1155,7 @@ class App extends Component {
       blackout_end_alaska_to_from_hawaii_string: temp_string
     });
   }
+
   blackoutStartDateToHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1179,6 +1163,7 @@ class App extends Component {
       blackout_start_to_hawaii_string: temp_string
     });
   }
+
   blackoutEndDateToHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1186,6 +1171,7 @@ class App extends Component {
       blackout_end_to_hawaii_string: temp_string
     });
   }
+
   blackoutStartDateFromHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1193,6 +1179,7 @@ class App extends Component {
       blackout_start_from_hawaii_string: temp_string
     });
   }
+
   blackoutEndDateFromHawaiiHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1200,6 +1187,7 @@ class App extends Component {
       blackout_end_from_hawaii_string: temp_string
     });
   }
+
   blackoutStartDateMexicoHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1207,6 +1195,7 @@ class App extends Component {
       blackout_start_mexico_string: temp_string
     });
   }
+
   blackoutEndDateMexicoHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1214,6 +1203,7 @@ class App extends Component {
       blackout_end_mexico_string: temp_string
     });
   }
+
   blackoutStartDateCostaRicaHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1221,6 +1211,7 @@ class App extends Component {
       blackout_start_costa_rica_string: temp_string
     });
   }
+
   blackoutEndDateCostaRicaHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1228,13 +1219,15 @@ class App extends Component {
       blackout_end_costa_rica_string: temp_string
     });
   }
+
   blackoutStartDateOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
       blackout_start_others: date,
-      blackout_start_others_string:temp_string
+      blackout_start_others_string: temp_string
     });
   }
+
   blackoutEndDateOthersHandler(date) {
     let temp_string = moment(date).format('YYYY-MM-DD');
     this.setState({
@@ -1243,13 +1236,10 @@ class App extends Component {
     });
   }
 
-
   formatMyDateForCSV = (date) => {
     let temp_date = moment(date).format('MM/DD/YYYY');
     return temp_date;
   }
-
-
 
 
   changeHiddenSheet = (e) => {
@@ -1259,319 +1249,438 @@ class App extends Component {
   }
 
 
+  // Create XML Output
+  createMyXml(combined_array) {
+    console.log('State inside of createMyXML:', this.state);
 
-
-  createMyXml(combined_array){
-      console.log('State inside of createMyXML:', this.state);
-
-
-      let doc = builder.create('FlightDeals', { encoding: 'UTF-8'})
+    let doc = builder.create('FlightDeals', { encoding: 'UTF-8' })
       .att('xmlns:ss', 'urn:schemas-microsoft-com:office:spreadsheet')
-      if(this.state.selectedOption === 'Mileage'){
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' AWARD SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
-      }else{
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' SALE - Updated at '+getMyMonth(new Date())+'/'+getMyDay(new Date())+'/'+getMyYear(new Date())+' '+getMyHour(new Date())+':'+getMyMinute(new Date())+' '+getMyTimeOfDay(new Date())+' by PRODUCER_NAME');
-      }
+
+    doc.com(getMyMonth(this.state.sale_start_date) + '/' + getMyDay(this.state.sale_start_date) + ' SALE - Updated at ' + getMyMonth(new Date()) + '/' + getMyDay(new Date()) + '/' + getMyYear(new Date()) + ' ' + getMyHour(new Date()) + ':' + getMyMinute(new Date()) + ' ' + getMyTimeOfDay(new Date()) + ' by PRODUCER_NAME');
 
 
-      combined_array.map((item) => {
+    combined_array.map((item) => {
+      let start_date = '';
+      let end_date = '';
+      let travel_start = null;
+      let travel_end = null;
+      let days_availability = '';
+      let black_out_date_sentence = '';
 
-        let start_date = '';
-        let end_date = '';
-        let travel_start = null;
-        let travel_end = null;
-        let days_availability = '';
-        let black_out_date_sentence = '';
-
-        if(item["group"] === "ALASKA_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_alaska_to_from_hawaii;
-          travel_end = this.state.travel_end_alaska_to_from_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_alaska_to_from_hawaii !== null && this.state.blackout_end_alaska_to_from_hawaii !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_start_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_start_alaska_to_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_alaska_to_from_hawaii)+' '+getMyDay(this.state.blackout_end_alaska_to_from_hawaii)+', '+getMyYear(this.state.blackout_end_alaska_to_from_hawaii)+'. '
-            }
-        }else if(item["group"] === "ALASKA_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_ALASKA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "TO_HAWAII" || item["group"] === "FROM_HAWAII"){
-          start_date = this.state.proposed_start_hawaii_string;
-          end_date = this.state.proposed_end_hawaii_string;
-          travel_start = this.state.travel_start_hawaii;
-          travel_end = this.state.travel_end_hawaii;
-          days_availability = this.state.days_availability_hawaii;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_from_hawaii !== null && this.state.blackout_end_from_hawaii !== null && item["group"] === "FROM_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_from_hawaii)+' '+getMyDay(this.state.blackout_start_from_hawaii)+', '+getMyYear(this.state.blackout_start_from_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_from_hawaii)+' '+getMyDay(this.state.blackout_end_from_hawaii)+', '+getMyYear(this.state.blackout_end_from_hawaii)+'. '
-            }
-            if(this.state.blackout_start_to_hawaii !== null && this.state.blackout_start_to_hawaii !== null && item["group"] === "TO_HAWAII"){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_to_hawaii)+' '+getMyDay(this.state.blackout_start_to_hawaii)+', '+getMyYear(this.state.blackout_start_to_hawaii)+' to '+makeDateMonthInEnglish(this.state.blackout_end_to_hawaii)+' '+getMyDay(this.state.blackout_end_to_hawaii)+', '+getMyYear(this.state.blackout_end_to_hawaii)+'. '
-            }
-        }else if(item["group"] === "TO_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_to_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "FROM_FLORIDA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_florida;
-          travel_end = this.state.travel_end_florida;
-          days_availability = this.state.days_availability_from_florida;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "MEXICO"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_mexico;
-          travel_end = this.state.travel_end_mexico;
-          days_availability = this.state.days_availability_mexico;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_mexico !== null && this.state.blackout_start_mexico !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_mexico)+' '+getMyDay(this.state.blackout_start_mexico)+', '+getMyYear(this.state.blackout_start_mexico)+' to '+makeDateMonthInEnglish(this.state.blackout_end_mexico)+' '+getMyDay(this.state.blackout_end_mexico)+', '+getMyYear(this.state.blackout_end_mexico)+'. '
-            }
-        }else if(item["group"] === "COSTA_RICA"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_costa_rica;
-          travel_end = this.state.travel_end_costa_rica;
-          days_availability = this.state.days_availability_costa_rica;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_costa_rica !== null && this.state.blackout_start_costa_rica !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_costa_rica)+' '+getMyDay(this.state.blackout_start_costa_rica)+', '+getMyYear(this.state.blackout_start_costa_rica)+' to '+makeDateMonthInEnglish(this.state.blackout_end_costa_rica)+' '+getMyDay(this.state.blackout_end_costa_rica)+', '+getMyYear(this.state.blackout_end_costa_rica)+'. '
-            }
-        }else if(item["group"] === "PAE"){
-          start_date = this.state.proposed_start_pae_string;
-          end_date = this.state.proposed_end_pae_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else if(item["group"] === "OTHER_MARKET"){
-          start_date = this.state.proposed_start_others_string;
-          end_date = this.state.proposed_end_others_string;
-          travel_start = this.state.travel_start_others;
-          travel_end = this.state.travel_end_others;
-          days_availability = this.state.days_availability_others;
-            // Pulling BLACKOUT DATES and FORMING the sentence
-            if(this.state.blackout_start_others !== null && this.state.blackout_start_others !== null){
-              black_out_date_sentence = 'Blackout dates are from '+makeDateMonthInEnglish(this.state.blackout_start_others)+' '+getMyDay(this.state.blackout_start_others)+', '+getMyYear(this.state.blackout_start_others)+' to '+makeDateMonthInEnglish(this.state.blackout_end_others)+' '+getMyDay(this.state.blackout_end_others)+', '+getMyYear(this.state.blackout_end_others)+'. '
-            }
-        }else{
-
+      if (item["group"] === "ALASKA_HAWAII") {
+        start_date = this.state.proposed_start_hawaii_string;
+        end_date = this.state.proposed_end_hawaii_string;
+        travel_start = this.state.travel_start_alaska_to_from_hawaii;
+        travel_end = this.state.travel_end_alaska_to_from_hawaii;
+        days_availability = this.state.days_availability_hawaii;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_alaska_to_from_hawaii !== null && this.state.blackout_end_alaska_to_from_hawaii !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_alaska_to_from_hawaii) + ' ' + getMyDay(this.state.blackout_start_alaska_to_from_hawaii) + ', ' + getMyYear(this.state.blackout_start_alaska_to_from_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_alaska_to_from_hawaii) + ' ' + getMyDay(this.state.blackout_end_alaska_to_from_hawaii) + ', ' + getMyYear(this.state.blackout_end_alaska_to_from_hawaii) + '. '
         }
-
-
-        let service_begin_sentence = '';
-        let service_ends_sentence = '';
-        let d_type = '';
-        let f_type = '';
-
-          if(this.state.selectedOption === 'Mileage'){
-            d_type = 'MileagePlan';
-            f_type = 'Miles'
-          }else{
-            d_type = 'Saver';
-          }
-
-        doc.com(getMyMonth(this.state.sale_start_date)+'/'+getMyDay(this.state.sale_start_date)+' '+item["name"]);
-        let deal_set = doc.ele('DealSet', {'from':this.state.sale_start_date_string+'T00:00:01', 'to':this.state.sale_end_date_string+'T23:59:59'})
-        .ele('DealInfo', {'code': getMyYear(this.state.sale_start_date)+''+getMyMonth(this.state.sale_start_date)+''+getMyDay(this.state.sale_start_date)+'_SALE-'+item["name"], 'dealType':d_type, 'url':''})
-          .ele('TravelDates', {'startdate':start_date+'T00:00:01', 'enddate':end_date+'T23:59:59'}).up()
-          .ele('DealTitle').up()
-          .ele('DealDescrip', '<![CDATA[Purchase by '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+'.]]>').up()
-          .ele('terms','<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on '+makeDateMonthInEnglish(this.state.sale_end_date)+' '+getMyDay(this.state.sale_end_date)+', '+getMyYear(this.state.sale_end_date)+', and at least '+this.state.advance_purchase+' prior to departure. Travel from '+item["origin_city"]+' ('+item["origin_code"]+') to '+item["destination_city"]+' ('+item["destination_code"]+') is valid '+days_availability+' from '+makeDateMonthInEnglish(travel_start)+' '+getMyDay(travel_start)+', '+getMyYear(travel_start)+' - '+makeDateMonthInEnglish(travel_end)+' '+getMyDay(travel_end)+', '+getMyYear(travel_end)+'. '+service_begin_sentence+''+service_ends_sentence+''+black_out_date_sentence+'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
-          .up()
-          let fares_layer = deal_set.ele('Fares');
-
-          if(f_type === 'Miles'){
-            item["price_types"].map((item2) => {
-              if(item["default"]===true){
-                fares_layer.ele('Row', {'fareType': f_type, 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': f_type})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-                .ele('Cell','<Data>'+item2["taxes"]+'</Data>').up()
-              }
-            });
-          }else{
-            item["price_types"].map((item2) => {
-              if(item["default"]===true && item2['fare_type'] === "Saver"){
-                fares_layer.ele('Row', {'fareType': item2['fare_type'], 'showAsDefault' : 'true'})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }else{
-                fares_layer.ele('Row', {'fareType': item2['fare_type']})
-                .ele('Cell','<Data>'+item["origin_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["origin_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item["destination_code"]+'</Data>').up()
-                .ele('Cell','<Data>'+returnMyCityName(item["destination_code"])+'</Data>').up()
-                .ele('Cell','<Data>'+item2["price"]+'</Data>').up()
-              }
-            });
-          }
-
-      });
-
-
-
-      let element = doc.toString({pretty: true});
-      element = element.replace(/&lt;/g, '<');
-      element = element.replace(/&gt;/g, '>');
-
-      this.setState({
-        xmloutput: element
-      });
-
-  }
-
-
-
-
-
-
-
-  moveExceptionsOut(){
-
-    let newPulledExceptionFares = this.state.pulled_exception_fares.slice();
-    let array_all_combined_prices = [...this.state.combined_saver_and_main];
-    let newAllMyFares = this.state.combined_saver_and_main.slice();
-    let newAllMyExceptions = this.state.exceptions.slice();
-
-
-    console.log(this.state.exceptions.length);
-
-    if(this.state.exceptions.length <= 0){
-      this.createMyXml(this.state.combined_saver_and_main);
-    }else{
-
-      newAllMyFares.map((item1, index1) => {
-        newAllMyExceptions.map((item2, index2) => {
-
-          if(item1["origin_code"] === item2["code_origin"] && item1["destination_code"] === item2["code_destination"]){
-
-            let index = array_all_combined_prices.indexOf(item1);
-
-            if (index !== -1) {
-              //Removes this fare from all_my_fares
-              array_all_combined_prices.splice(index, 1);
-
-              newPulledExceptionFares.push({
-                ...item1,
-                days_available: item2["travel_valid"],
-                service_begins: item2["service_begins"],
-                service_ends: item2["service_ends"],
-                service_start_string: item2["service_begins_string"],
-                service_end_string: item2["service_end_string"]
-              });
-
-              this.setState({
-                combined_saver_and_main: array_all_combined_prices,
-                pulled_exception_fares: newPulledExceptionFares
-              }, () => this.createMyXml(this.state.combined_saver_and_main));
-
-
-
-              this.createMyXml(this.state.combined_saver_and_main);
-
-              console.log("Fare Removed from Index: "+index1);
-            }
-
-          }
-        });
-      });
-
-    }
-
-
-  }
-
-
-  verifyThatExceptionsIsNotEmpty(){
-
-    let newAllMyExceptions = this.state.exceptions.slice();
-    let array_all_exceptions = [...this.state.exceptions];
-
-    //console.log(newAllMyExceptions[0]);
-
-    newAllMyExceptions.map((theitem, myindex) => {
-      if(theitem["code_origin"] === ""){
-        //if (myindex !== -1) {
-          array_all_exceptions.splice(myindex, 1);
-
-          this.setState({
-            exceptions: array_all_exceptions
-          }, () => this.moveExceptionsOut());
-        //}
-      }else{
-        this.moveExceptionsOut();
+      } else if (item["group"] === "ALASKA_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "FROM_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "TO_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "TO_HAWAII" || item["group"] === "FROM_HAWAII") {
+        start_date = this.state.proposed_start_hawaii_string;
+        end_date = this.state.proposed_end_hawaii_string;
+        travel_start = this.state.travel_start_hawaii;
+        travel_end = this.state.travel_end_hawaii;
+        days_availability = this.state.days_availability_hawaii;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_from_hawaii !== null && this.state.blackout_end_from_hawaii !== null && item["group"] === "FROM_HAWAII") {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_from_hawaii) + ' ' + getMyDay(this.state.blackout_start_from_hawaii) + ', ' + getMyYear(this.state.blackout_start_from_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_from_hawaii) + ' ' + getMyDay(this.state.blackout_end_from_hawaii) + ', ' + getMyYear(this.state.blackout_end_from_hawaii) + '. '
+        }
+        if (this.state.blackout_start_to_hawaii !== null && this.state.blackout_start_to_hawaii !== null && item["group"] === "TO_HAWAII") {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_to_hawaii) + ' ' + getMyDay(this.state.blackout_start_to_hawaii) + ', ' + getMyYear(this.state.blackout_start_to_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_to_hawaii) + ' ' + getMyDay(this.state.blackout_end_to_hawaii) + ', ' + getMyYear(this.state.blackout_end_to_hawaii) + '. '
+        }
+      } else if (item["group"] === "TO_FLORIDA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_florida;
+        travel_end = this.state.travel_end_florida;
+        days_availability = this.state.days_availability_to_florida;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "FROM_FLORIDA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_florida;
+        travel_end = this.state.travel_end_florida;
+        days_availability = this.state.days_availability_from_florida;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "MEXICO") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_mexico;
+        travel_end = this.state.travel_end_mexico;
+        days_availability = this.state.days_availability_mexico;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_mexico !== null && this.state.blackout_start_mexico !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_mexico) + ' ' + getMyDay(this.state.blackout_start_mexico) + ', ' + getMyYear(this.state.blackout_start_mexico) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_mexico) + ' ' + getMyDay(this.state.blackout_end_mexico) + ', ' + getMyYear(this.state.blackout_end_mexico) + '. '
+        }
+      } else if (item["group"] === "COSTA_RICA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_costa_rica;
+        travel_end = this.state.travel_end_costa_rica;
+        days_availability = this.state.days_availability_costa_rica;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_costa_rica !== null && this.state.blackout_start_costa_rica !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_costa_rica) + ' ' + getMyDay(this.state.blackout_start_costa_rica) + ', ' + getMyYear(this.state.blackout_start_costa_rica) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_costa_rica) + ' ' + getMyDay(this.state.blackout_end_costa_rica) + ', ' + getMyYear(this.state.blackout_end_costa_rica) + '. '
+        }
+      } else if (item["group"] === "PAE") {
+        start_date = this.state.proposed_start_pae_string;
+        end_date = this.state.proposed_end_pae_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "OTHER_MARKET") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else {
       }
+
+
+      let service_begin_sentence = '';
+      let service_ends_sentence = '';
+
+      let d_type = 'Saver';
+
+      doc.com(getMyMonth(this.state.sale_start_date) + '/' + getMyDay(this.state.sale_start_date) + ' ' + item["name"]);
+      let deal_set = doc.ele('DealSet', { 'from': this.state.sale_start_date_string + 'T00:00:01', 'to': this.state.sale_end_date_string + 'T23:59:59' })
+        .ele('DealInfo', { 'code': getMyYear(this.state.sale_start_date) + '' + getMyMonth(this.state.sale_start_date) + '' + getMyDay(this.state.sale_start_date) + '_SALE-' + item["name"], 'dealType': d_type, 'url': '' })
+        .ele('TravelDates', { 'startdate': start_date + 'T00:00:01', 'enddate': end_date + 'T23:59:59' }).up()
+        .ele('DealTitle').up()
+        .ele('DealDescrip', '<![CDATA[Purchase by ' + makeDateMonthInEnglish(this.state.sale_end_date) + ' ' + getMyDay(this.state.sale_end_date) + ', ' + getMyYear(this.state.sale_end_date) + '.]]>').up()
+        .ele('terms', '<![CDATA[<strong>Fare Rules:</strong> Purchase by 11:59 pm (PT) on ' + makeDateMonthInEnglish(this.state.sale_end_date) + ' ' + getMyDay(this.state.sale_end_date) + ', ' + getMyYear(this.state.sale_end_date) + ', and at least ' + this.state.advance_purchase + ' prior to departure. Travel from ' + item["origin_city"] + ' (' + item["origin_code"] + ') to ' + item["destination_city"] + ' (' + item["destination_code"] + ') is valid ' + days_availability + ' from ' + makeDateMonthInEnglish(travel_start) + ' ' + getMyDay(travel_start) + ', ' + getMyYear(travel_start) + ' - ' + makeDateMonthInEnglish(travel_end) + ' ' + getMyDay(travel_end) + ', ' + getMyYear(travel_end) + '. ' + service_begin_sentence + '' + service_ends_sentence + '' + black_out_date_sentence + 'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.]]>').up()
+        .up()
+      let fares_layer = deal_set.ele('Fares');
+
+      item["price_types"].map((item2) => {
+        if (item["default"] === true) {
+          if (item2['fare_type'] === "Saver") {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'], 'showAsDefault': 'true' })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+          } else if (item2['fare_type'] === "Main") {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'], 'showAsDefault': 'true' })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+          } else {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'], 'showAsDefault': 'true' })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["taxes"] + '</Data>').up()
+          }
+        } else {
+          if (item2['fare_type'] === "Saver") {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'] })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+          } else if (item2['fare_type'] === "Main") {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'] })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+          } else {
+            fares_layer.ele('Row', { 'fareType': item2['fare_type'] })
+              .ele('Cell', '<Data>' + item["origin_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["origin_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item["destination_code"] + '</Data>').up()
+              .ele('Cell', '<Data>' + returnMyCityName(item["destination_code"]) + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["price"] + '</Data>').up()
+              .ele('Cell', '<Data>' + item2["taxes"] + '</Data>').up()
+          }
+        }
+      });
+
+
+
+      // .ele('Cell', '<Data>' + item2["taxes"] + '</Data>').up()
     });
 
 
-  }
+    let element = doc.toString({ pretty: true });
+    element = element.replace(/&lt;/g, '<');
+    element = element.replace(/&gt;/g, '>');
+
+    this.setState({
+      finalOutput: element
+    });
+
+  }//End of `createMyXml`
+
+
+  // Create JSON Output
+  createMyJSON(combined_array) {
+    console.log('State inside of createMyJSON:', this.state);
+
+    // let dealsetComment = getMyMonth(this.state.sale_start_date) + '/' + getMyDay(this.state.sale_start_date) + ' SALE - Updated at ' + getMyMonth(new Date()) + '/' + getMyDay(new Date()) + '/' + getMyYear(new Date()) + ' ' + getMyHour(new Date()) + ':' + getMyMinute(new Date()) + ' ' + getMyTimeOfDay(new Date()) + ' by PRODUCER_NAME';
+
+    let outputArray = [];
+
+    combined_array.map((item) => {
+
+      let dealSetObject = {};
+
+      let start_date = '';
+      let end_date = '';
+      let travel_start = null;
+      let travel_end = null;
+      let days_availability = '';
+      let black_out_date_sentence = '';
+
+      if (item["group"] === "ALASKA_HAWAII") {
+        start_date = this.state.proposed_start_hawaii_string;
+        end_date = this.state.proposed_end_hawaii_string;
+        travel_start = this.state.travel_start_alaska_to_from_hawaii;
+        travel_end = this.state.travel_end_alaska_to_from_hawaii;
+        days_availability = this.state.days_availability_hawaii;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_alaska_to_from_hawaii !== null && this.state.blackout_end_alaska_to_from_hawaii !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_alaska_to_from_hawaii) + ' ' + getMyDay(this.state.blackout_start_alaska_to_from_hawaii) + ', ' + getMyYear(this.state.blackout_start_alaska_to_from_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_alaska_to_from_hawaii) + ' ' + getMyDay(this.state.blackout_end_alaska_to_from_hawaii) + ', ' + getMyYear(this.state.blackout_end_alaska_to_from_hawaii) + '. '
+        }
+      } else if (item["group"] === "ALASKA_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "FROM_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "TO_ALASKA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "TO_HAWAII" || item["group"] === "FROM_HAWAII") {
+        start_date = this.state.proposed_start_hawaii_string;
+        end_date = this.state.proposed_end_hawaii_string;
+        travel_start = this.state.travel_start_hawaii;
+        travel_end = this.state.travel_end_hawaii;
+        days_availability = this.state.days_availability_hawaii;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_from_hawaii !== null && this.state.blackout_end_from_hawaii !== null && item["group"] === "FROM_HAWAII") {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_from_hawaii) + ' ' + getMyDay(this.state.blackout_start_from_hawaii) + ', ' + getMyYear(this.state.blackout_start_from_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_from_hawaii) + ' ' + getMyDay(this.state.blackout_end_from_hawaii) + ', ' + getMyYear(this.state.blackout_end_from_hawaii) + '. '
+        }
+        if (this.state.blackout_start_to_hawaii !== null && this.state.blackout_start_to_hawaii !== null && item["group"] === "TO_HAWAII") {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_to_hawaii) + ' ' + getMyDay(this.state.blackout_start_to_hawaii) + ', ' + getMyYear(this.state.blackout_start_to_hawaii) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_to_hawaii) + ' ' + getMyDay(this.state.blackout_end_to_hawaii) + ', ' + getMyYear(this.state.blackout_end_to_hawaii) + '. '
+        }
+      } else if (item["group"] === "TO_FLORIDA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_florida;
+        travel_end = this.state.travel_end_florida;
+        days_availability = this.state.days_availability_to_florida;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "FROM_FLORIDA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_florida;
+        travel_end = this.state.travel_end_florida;
+        days_availability = this.state.days_availability_from_florida;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "MEXICO") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_mexico;
+        travel_end = this.state.travel_end_mexico;
+        days_availability = this.state.days_availability_mexico;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_mexico !== null && this.state.blackout_start_mexico !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_mexico) + ' ' + getMyDay(this.state.blackout_start_mexico) + ', ' + getMyYear(this.state.blackout_start_mexico) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_mexico) + ' ' + getMyDay(this.state.blackout_end_mexico) + ', ' + getMyYear(this.state.blackout_end_mexico) + '. '
+        }
+      } else if (item["group"] === "COSTA_RICA") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_costa_rica;
+        travel_end = this.state.travel_end_costa_rica;
+        days_availability = this.state.days_availability_costa_rica;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_costa_rica !== null && this.state.blackout_start_costa_rica !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_costa_rica) + ' ' + getMyDay(this.state.blackout_start_costa_rica) + ', ' + getMyYear(this.state.blackout_start_costa_rica) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_costa_rica) + ' ' + getMyDay(this.state.blackout_end_costa_rica) + ', ' + getMyYear(this.state.blackout_end_costa_rica) + '. '
+        }
+      } else if (item["group"] === "PAE") {
+        start_date = this.state.proposed_start_pae_string;
+        end_date = this.state.proposed_end_pae_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else if (item["group"] === "OTHER_MARKET") {
+        start_date = this.state.proposed_start_others_string;
+        end_date = this.state.proposed_end_others_string;
+        travel_start = this.state.travel_start_others;
+        travel_end = this.state.travel_end_others;
+        days_availability = this.state.days_availability_others;
+        // Pulling BLACKOUT DATES and FORMING the sentence
+        if (this.state.blackout_start_others !== null && this.state.blackout_start_others !== null) {
+          black_out_date_sentence = 'Blackout dates are from ' + makeDateMonthInEnglish(this.state.blackout_start_others) + ' ' + getMyDay(this.state.blackout_start_others) + ', ' + getMyYear(this.state.blackout_start_others) + ' to ' + makeDateMonthInEnglish(this.state.blackout_end_others) + ' ' + getMyDay(this.state.blackout_end_others) + ', ' + getMyYear(this.state.blackout_end_others) + '. '
+        }
+      } else {
+      }
+
+
+      let service_begin_sentence = '';
+      let service_ends_sentence = '';
+
+      // let d_type = 'Saver';
+      // let saleNameComment = getMyMonth(this.state.sale_start_date) + '/' + getMyDay(this.state.sale_start_date) + ' ' + item["name"];
+
+      let fareRulesValue = 'Fare Rules:</strong> Purchase by 11:59 pm (PT) on ' + makeDateMonthInEnglish(this.state.sale_end_date) + ' ' + getMyDay(this.state.sale_end_date) + ', ' + getMyYear(this.state.sale_end_date) + ', and at least ' + this.state.advance_purchase + ' prior to departure. Travel from ' + item["origin_city"] + ' (' + item["origin_code"] + ') to ' + item["destination_city"] + ' (' + item["destination_code"] + ') is valid ' + days_availability + ' from ' + makeDateMonthInEnglish(travel_start) + ' ' + getMyDay(travel_start) + ', ' + getMyYear(travel_start) + ' - ' + makeDateMonthInEnglish(travel_end) + ' ' + getMyDay(travel_end) + ', ' + getMyYear(travel_end) + '. ' + service_begin_sentence + '' + service_ends_sentence + '' + black_out_date_sentence + 'Bag fees <a href="#terms">may apply</a> for <a href="/content/travel-info/baggage/checked-bags">checked baggage</a>. See <a href="#terms">bottom of page</a> for full terms and conditions.';
+      let dealCodeValue = getMyYear(this.state.sale_start_date) + '' + getMyMonth(this.state.sale_start_date) + '' + getMyDay(this.state.sale_start_date) + '_SALE-' + item["name"];
+
+      let startDateValue = start_date;
+      let endDateValue = end_date;
+      let purchaseByValue = 'Purchase by ' + makeDateMonthInEnglish(this.state.sale_end_date) + ' ' + getMyDay(this.state.sale_end_date) + ', ' + getMyYear(this.state.sale_end_date) + '.'
+
+      let saverPrice = item["price_types"].find((priceTypeObj) => priceTypeObj.fare_type === 'Saver');
+      let saverRevenueValue = saverPrice.price;
+
+      let mainPrice = item["price_types"].find((priceTypeObj) => priceTypeObj.fare_type === 'Main');
+      let mainRevenueValue = mainPrice.price;
+
+      let milesPrice = item["price_types"].find((priceTypeObj) => priceTypeObj.fare_type === 'Miles');
+      let milesValue = milesPrice.price;
+      let feeValue = milesPrice.taxes;
+
+      let activateValue = this.state.sale_start_date;
+      let deactivateValue = this.state.sale_end_date;
+
+      //Create DealSet Object
+      dealSetObject.dealCode = dealCodeValue;
+      dealSetObject.showAsDefault = false;
+      dealSetObject.origin = item['origin_city'];
+      dealSetObject.originShort = item['origin_code'];
+      dealSetObject.destination = item['destination_city'];
+      dealSetObject.destinationShort = item['destination_code'];
+      dealSetObject.purchaseBy = purchaseByValue;
+      dealSetObject.fareRules = fareRulesValue;
+      dealSetObject.saverRevenue = saverRevenueValue;
+      dealSetObject.mainRevenue = mainRevenueValue;
+      dealSetObject.miles = milesValue;
+      dealSetObject.fee = feeValue;
+      dealSetObject.activate = activateValue;
+      dealSetObject.deactivate = deactivateValue;
+      dealSetObject.travelStart = startDateValue;
+      dealSetObject.travelEnd = endDateValue;
+
+      //Push DealSet Object to final output Array
+      outputArray.push(dealSetObject);
+    });
+
+
+    outputArray = JSON.stringify(outputArray)
+    console.log('outputArray: ', outputArray);
+    this.setState({
+      finalOutput: outputArray
+    });
+
+  }//End of `createMyJSON`
 
 
 
 
   //FORM BUTTON CLICK HANDLER
-  createSaleDetails(e){
-    e.preventDefault();
+  // createSaleDetails(e) {
+  //   e.preventDefault();
 
-    this.verifyThatExceptionsIsNotEmpty();
+  //   this.createMyJSON(this.state.combined_saver_and_main);
+  //   // this.verifyThatExceptionsIsNotEmpty();
 
+  // }
+
+
+  createMyJSONHandler = () => {
+    this.createMyJSON(this.state.combined_saver_and_main);
+  }
+
+
+  createMyXmlHandler = () => {
+    this.createMyXml(this.state.combined_saver_and_main);
   }
 
 
@@ -1619,16 +1728,23 @@ class App extends Component {
 
 
   camelCaseCity = (cityname) => {
-    for(let i = 0; i < city_caps_conversion.length; i++){
+    for (let i = 0; i < city_caps_conversion.length; i++) {
       let myitem = city_caps_conversion[i].AVFM_name;
       let mycityname = city_caps_conversion[i].City_Name;
-      if(myitem === cityname){
+      if (myitem === cityname) {
         return mycityname;
       }
     }
   }
 
 
+  splitAwardFromFee = (awardString) => {
+    const splitAward = awardString.split('+');
+    let awardOnly = splitAward[0].trim();
+    let awardToInt = parseInt(awardOnly);
+    console.log('LEXI: ', awardToInt);
+    return awardToInt;
+  }
 
 
 
@@ -1640,17 +1756,18 @@ class App extends Component {
     let split_name = [];
     let myfilename = file.name;
     myfilename = myfilename.substring(0, myfilename.indexOf("."));
-    if(myfilename.indexOf(" ") > -1){
+    if (myfilename.indexOf(" ") > -1) {
       split_name[0] = myfilename.substring(myfilename.indexOf(" "), myfilename.length).trim();
       split_name[1] = myfilename.substring(0, myfilename.indexOf(" "));
 
-    }else{
+    } else {
       split_name[0] = myfilename;
     }
 
     // console.log(split_name);
     this.setState({
-      file_name: split_name[0]
+      file_name: split_name[0],
+      isDisabled: false
     });
 
 
@@ -1660,14 +1777,14 @@ class App extends Component {
       //Loops through every row in the sheet
 
 
-      for(let index = 0; index < data.length; index++){
+      for (let index = 0; index < data.length; index++) {
 
         // SALE_TYPE (Col 7)
-        if(data[index][0] === 'OW SALE:' && data[index][1] !== null){
+        if (data[index][0] === 'OW SALE:' && data[index][1] !== null) {
           this.setState({
             sale_type: data[index][1]
           });
-        }else{
+        } else {
           this.setState({
             sale_type: this.state.file_name
           });
@@ -1675,11 +1792,11 @@ class App extends Component {
 
 
         // SALE_OBJECTIVE (Col 8)
-        if(data[index][0] === 'Sale Objective:' && data[index][1] !== null){
+        if (data[index][0] === 'Sale Objective:' && data[index][1] !== null) {
           this.setState({
             sale_objective: data[index][1]
           });
-        }else{
+        } else {
           this.setState({
             sale_objective: this.state.file_name
           });
@@ -1688,7 +1805,7 @@ class App extends Component {
 
         //console.log(data[index]);
         //Get Sale Start Date from Sheet 1 and set state for sale_start_date variables
-        if(data[index][0] === 'Sale Start Date:' && data[index][1] !== null){
+        if (data[index][0] === 'Sale Start Date:' && data[index][1] !== null) {
           //console.log(data[index]);
           let temp_string = moment(data[index][1]).format('YYYY-MM-DD');
           this.setState({
@@ -1697,7 +1814,7 @@ class App extends Component {
           });
         }
         //Get Purchase By date from Sheet 1 and set state for sale_end_date variables
-        if(data[index][0] === 'Purchase By:' && data[index][1] !== null){
+        if (data[index][0] === 'Purchase By:' && data[index][1] !== null) {
           //console.log(data[index]);
           let temp_string = moment(data[index][1]).format('YYYY-MM-DD');
           this.setState({
@@ -1706,14 +1823,14 @@ class App extends Component {
           });
         }
         //Get Advance Purchase Days from Sheet 1 and set state for advance_purchase variable
-        if(data[index][0] === 'Advance Purchase:' && data[index][1] !== null){
+        if (data[index][0] === 'Advance Purchase:' && data[index][1] !== null) {
           //console.log(data[index]);
           this.setState({
             advance_purchase: data[index][1]
           });
         }
         //Get Travel Start Date from Sheet 1 and set state for all travel_start variables
-        if(data[index][0] === 'Travel Start:' && data[index][1] !== null){
+        if (data[index][0] === 'Travel Start:' && data[index][1] !== null) {
           //console.log(data[index]);
           let temp_string = moment(data[index][1]).format('YYYY-MM-DD');
           this.setState({
@@ -1733,7 +1850,7 @@ class App extends Component {
         }
 
         //Get Completed Travel By Date from Sheet 1 and set state for all travel_end variables
-        if(data[index][0] === 'Complete Travel By:' && data[index][1] !== null){
+        if (data[index][0] === 'Complete Travel By:' && data[index][1] !== null) {
           //console.log(data[index]);
           let temp_string = moment(data[index][1]).format('YYYY-MM-DD');
           this.setState({
@@ -1755,12 +1872,12 @@ class App extends Component {
 
 
         //Get Proposed Calendar Dates - PAE
-        if(data[index][0] === 'Calendar Dates - PAE' && data[index][1] !== null){
-          let temp_string_start = moment(data[index-1][1]).format('YYYY-MM-DD');
+        if (data[index][0] === 'Calendar Dates - PAE' && data[index][1] !== null) {
+          let temp_string_start = moment(data[index - 1][1]).format('YYYY-MM-DD');
           let temp_string_end = moment(data[index][1]).format('YYYY-MM-DD');
 
           this.setState({
-            proposed_start_pae: data[index-1][1],
+            proposed_start_pae: data[index - 1][1],
             proposed_start_pae_string: temp_string_start,
             proposed_end_pae: data[index][1],
             proposed_end_pae_string: temp_string_end
@@ -1769,12 +1886,12 @@ class App extends Component {
 
 
         //Get Proposed Calendar Dates - HAWAII
-        if(data[index][0] === 'Calendar Dates - Hawaii' && data[index][1] !== null){
-          let temp_string_start = moment(data[index-1][1]).format('YYYY-MM-DD');
+        if (data[index][0] === 'Calendar Dates - Hawaii' && data[index][1] !== null) {
+          let temp_string_start = moment(data[index - 1][1]).format('YYYY-MM-DD');
           let temp_string_end = moment(data[index][1]).format('YYYY-MM-DD');
 
           this.setState({
-            proposed_start_hawaii: data[index-1][1],
+            proposed_start_hawaii: data[index - 1][1],
             proposed_start_hawaii_string: temp_string_start,
             proposed_end_hawaii: data[index][1],
             proposed_end_hawaii_string: temp_string_end
@@ -1783,12 +1900,12 @@ class App extends Component {
 
 
         //Get Proposed Calendar Dates - OTHERS
-        if(data[index][0] === 'Calendar Dates - All' && data[index][1] !== null){
-          let temp_string_start = moment(data[index-1][1]).format('YYYY-MM-DD');
+        if (data[index][0] === 'Calendar Dates - All' && data[index][1] !== null) {
+          let temp_string_start = moment(data[index - 1][1]).format('YYYY-MM-DD');
           let temp_string_end = moment(data[index][1]).format('YYYY-MM-DD');
 
           this.setState({
-            proposed_start_others: data[index-1][1],
+            proposed_start_others: data[index - 1][1],
             proposed_start_others_string: temp_string_start,
             proposed_end_others: data[index][1],
             proposed_end_others_string: temp_string_end
@@ -1801,104 +1918,104 @@ class App extends Component {
 
 
         //Get BALCKOUTS
-        if(data[index][0] === 'Blackouts:' && data[index][1] !== null){
+        if (data[index][0] === 'Blackouts:' && data[index][1] !== null) {
 
-          if(data[index][1].indexOf('to') > -1){
+          if (data[index][1].indexOf('to') > -1) {
 
-              let temp_array = [];
-              let temp_blackout = data[index][1];
-              temp_array = temp_blackout.split(" to ");
+            let temp_array = [];
+            let temp_blackout = data[index][1];
+            temp_array = temp_blackout.split(" to ");
 
-              if(temp_array.length === 2){
-                let temp_blackout_start_date = new Date(temp_array[0]);
-                let temp_blackout_start_date_string = moment(temp_blackout_start_date).format('YYYY-MM-DD');
+            if (temp_array.length === 2) {
+              let temp_blackout_start_date = new Date(temp_array[0]);
+              let temp_blackout_start_date_string = moment(temp_blackout_start_date).format('YYYY-MM-DD');
 
-                let temp_blackout_end_date = new Date(temp_array[1]);
-                let temp_blackout_end_date_string = moment(temp_blackout_end_date).format('YYYY-MM-DD');
+              let temp_blackout_end_date = new Date(temp_array[1]);
+              let temp_blackout_end_date_string = moment(temp_blackout_end_date).format('YYYY-MM-DD');
 
-                this.setState({
-                  blackout_start_alaska_to_from_hawaii: temp_blackout_start_date,
-                  blackout_start_alaska_to_from_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_alaska_to_from_hawaii: temp_blackout_end_date,
-                  blackout_end_alaska_to_from_hawaii_string: temp_blackout_end_date_string,
+              this.setState({
+                blackout_start_alaska_to_from_hawaii: temp_blackout_start_date,
+                blackout_start_alaska_to_from_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_alaska_to_from_hawaii: temp_blackout_end_date,
+                blackout_end_alaska_to_from_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_from_hawaii: temp_blackout_start_date,
-                  blackout_start_from_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_from_hawaii: temp_blackout_end_date,
-                  blackout_end_from_hawaii_string: temp_blackout_end_date_string,
+                blackout_start_from_hawaii: temp_blackout_start_date,
+                blackout_start_from_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_from_hawaii: temp_blackout_end_date,
+                blackout_end_from_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_to_hawaii: temp_blackout_start_date,
-                  blackout_start_to_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_to_hawaii: temp_blackout_end_date,
-                  blackout_end_to_hawaii_string: temp_blackout_end_date_string,
+                blackout_start_to_hawaii: temp_blackout_start_date,
+                blackout_start_to_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_to_hawaii: temp_blackout_end_date,
+                blackout_end_to_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_costa_rica: temp_blackout_start_date,
-                  blackout_start_costa_rica_string: temp_blackout_start_date_string,
-                  blackout_end_costa_rica: temp_blackout_end_date,
-                  blackout_end_costa_rica_string: temp_blackout_end_date_string,
+                blackout_start_costa_rica: temp_blackout_start_date,
+                blackout_start_costa_rica_string: temp_blackout_start_date_string,
+                blackout_end_costa_rica: temp_blackout_end_date,
+                blackout_end_costa_rica_string: temp_blackout_end_date_string,
 
-                  blackout_start_mexico: temp_blackout_start_date,
-                  blackout_start_mexico_string: temp_blackout_start_date_string,
-                  blackout_end_mexico: temp_blackout_end_date,
-                  blackout_end_mexico_string: temp_blackout_end_date_string,
+                blackout_start_mexico: temp_blackout_start_date,
+                blackout_start_mexico_string: temp_blackout_start_date_string,
+                blackout_end_mexico: temp_blackout_end_date,
+                blackout_end_mexico_string: temp_blackout_end_date_string,
 
-                  blackout_start_others: temp_blackout_start_date,
-                  blackout_start_others_string: temp_blackout_start_date_string,
-                  blackout_end_others: temp_blackout_end_date,
-                  blackout_end_others_string: temp_blackout_end_date_string,
+                blackout_start_others: temp_blackout_start_date,
+                blackout_start_others_string: temp_blackout_start_date_string,
+                blackout_end_others: temp_blackout_end_date,
+                blackout_end_others_string: temp_blackout_end_date_string,
 
-                });
-              }
-            }else if(data[index][1].indexOf('-') > -1){
+              });
+            }
+          } else if (data[index][1].indexOf('-') > -1) {
 
-              let temp_array = [];
-              let temp_blackout = data[index][1];
-              temp_array = temp_blackout.split("-");
+            let temp_array = [];
+            let temp_blackout = data[index][1];
+            temp_array = temp_blackout.split("-");
 
-              if(temp_array.length === 2){
-                let temp_blackout_start_date = new Date(temp_array[0]);
-                let temp_blackout_start_date_string = moment(temp_blackout_start_date).format('YYYY-MM-DD');
+            if (temp_array.length === 2) {
+              let temp_blackout_start_date = new Date(temp_array[0]);
+              let temp_blackout_start_date_string = moment(temp_blackout_start_date).format('YYYY-MM-DD');
 
-                let temp_blackout_end_date = new Date(temp_array[1]);
-                let temp_blackout_end_date_string = moment(temp_blackout_end_date).format('YYYY-MM-DD');
+              let temp_blackout_end_date = new Date(temp_array[1]);
+              let temp_blackout_end_date_string = moment(temp_blackout_end_date).format('YYYY-MM-DD');
 
-                this.setState({
-                  blackout_start_alaska_to_from_hawaii: temp_blackout_start_date,
-                  blackout_start_alaska_to_from_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_alaska_to_from_hawaii: temp_blackout_end_date,
-                  blackout_end_alaska_to_from_hawaii_string: temp_blackout_end_date_string,
+              this.setState({
+                blackout_start_alaska_to_from_hawaii: temp_blackout_start_date,
+                blackout_start_alaska_to_from_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_alaska_to_from_hawaii: temp_blackout_end_date,
+                blackout_end_alaska_to_from_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_from_hawaii: temp_blackout_start_date,
-                  blackout_start_from_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_from_hawaii: temp_blackout_end_date,
-                  blackout_end_from_hawaii_string: temp_blackout_end_date_string,
+                blackout_start_from_hawaii: temp_blackout_start_date,
+                blackout_start_from_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_from_hawaii: temp_blackout_end_date,
+                blackout_end_from_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_to_hawaii: temp_blackout_start_date,
-                  blackout_start_to_hawaii_string: temp_blackout_start_date_string,
-                  blackout_end_to_hawaii: temp_blackout_end_date,
-                  blackout_end_to_hawaii_string: temp_blackout_end_date_string,
+                blackout_start_to_hawaii: temp_blackout_start_date,
+                blackout_start_to_hawaii_string: temp_blackout_start_date_string,
+                blackout_end_to_hawaii: temp_blackout_end_date,
+                blackout_end_to_hawaii_string: temp_blackout_end_date_string,
 
-                  blackout_start_costa_rica: temp_blackout_start_date,
-                  blackout_start_costa_rica_string: temp_blackout_start_date_string,
-                  blackout_end_costa_rica: temp_blackout_end_date,
-                  blackout_end_costa_rica_string: temp_blackout_end_date_string,
+                blackout_start_costa_rica: temp_blackout_start_date,
+                blackout_start_costa_rica_string: temp_blackout_start_date_string,
+                blackout_end_costa_rica: temp_blackout_end_date,
+                blackout_end_costa_rica_string: temp_blackout_end_date_string,
 
-                  blackout_start_mexico: temp_blackout_start_date,
-                  blackout_start_mexico_string: temp_blackout_start_date_string,
-                  blackout_end_mexico: temp_blackout_end_date,
-                  blackout_end_mexico_string: temp_blackout_end_date_string,
+                blackout_start_mexico: temp_blackout_start_date,
+                blackout_start_mexico_string: temp_blackout_start_date_string,
+                blackout_end_mexico: temp_blackout_end_date,
+                blackout_end_mexico_string: temp_blackout_end_date_string,
 
-                  blackout_start_others: temp_blackout_start_date,
-                  blackout_start_others_string: temp_blackout_start_date_string,
-                  blackout_end_others: temp_blackout_end_date,
-                  blackout_end_others_string: temp_blackout_end_date_string,
+                blackout_start_others: temp_blackout_start_date,
+                blackout_start_others_string: temp_blackout_start_date_string,
+                blackout_end_others: temp_blackout_end_date,
+                blackout_end_others_string: temp_blackout_end_date_string,
 
-                });
-            }else{
+              });
+            } else {
               alert("NO MATCHING BLACKOUT DATES FOUND!");
             }
 
-          }else{
+          } else {
             alert("MULTIPLE BLACKOUT DATES FOUND!");
           }
 
@@ -1911,371 +2028,124 @@ class App extends Component {
     })//end of readXlsxFile for Sheet 1
 
 
-        let sheet_name = this.state.hidden_sheet;
+    let sheet_name = this.state.hidden_sheet;
 
-        //US Ad Fare Sheet Looper
-        readXlsxFile(file, { sheet: sheet_name }).then((data) => {
-              //Loops through every row in the sheet
+    //US Ad Fare Sheet Looper
+    readXlsxFile(file, { sheet: sheet_name }).then((data) => {
+      //Loops through every row in the sheet
 
+      for (let i = 0; i < data.length; i++) {
 
-          if(this.state.selectedOption === 'Saver'){
-
-              for(let i = 0; i < data.length; i++){
-
-                //Get number of Distinct OD from the US Ad Fare Sheet TAB
-                if(data[i].indexOf("Distinct ODs:") > -1){
-                  this.setState({
-                    number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:")+1]
-                  });
-                }
-
-
-                if (typeof data[i][0] === 'string' && data[i][0] !== null) {
-
-                  //Checks that the values in index 0 and 2 are airport codes for every row in the spreadsheet
-                  if(typeof data[i][2] == 'string' && (data[i][2].length === 3 && data[i][4].length === 3)){
-
-                    let my_fare_type = data[i][11];
-
-                    let mygroup = "";
-
-                    if(groupMeByOrigin(data[i][2]) === "HAWAII"){
-                        mygroup = "FROM_HAWAII";
-                    }else if(groupMeByOrigin(data[i][4]) === "HAWAII"){
-                        mygroup = "TO_HAWAII";
-                    }else if(groupMeByOrigin(data[i][2]) === "MEXICO" || groupMeByOrigin(data[i][2]) === "COSTA_RICA"){
-                        mygroup = "";
-                        console.log("THERE SHOULD NOT BE FARES THAT ORIGINATE FROM MEXICO OR COSTA RICA!");
-                    }else if(groupMeByOrigin(data[i][4]) === "MEXICO"){
-                        mygroup = "MEXICO";
-                    }else if(groupMeByOrigin(data[i][4]) === "COSTA_RICA"){
-                        mygroup = "COSTA_RICA";
-                    }else if(groupMeByOrigin(data[i][2]) === "FLORIDA"){
-                        mygroup = "FROM_FLORIDA";
-                    }else if(groupMeByOrigin(data[i][4]) === "FLORIDA"){
-                        mygroup = "TO_FLORIDA";
-                    }else if(groupMeByOrigin(data[i][2]) === "PAE" || groupMeByOrigin(data[i][4]) === "PAE"){
-                        mygroup = "PAE";
-                    }else if(groupMeByOrigin(data[i][4]) === "OTHER_MARKET"){
-                        mygroup = "OTHER_MARKET";
-                    }else{
-                      mygroup = "";
-                      console.log("NO GROUP WAS FOUND FOR " +data[i][2]+data[i][4]);
-                    }
-
-
-                    //console.log(data[i]);
-                    let newArray = this.state.all_my_fares.slice();
-
-
-                    if(my_fare_type === "SAVER"){
-                      my_fare_type = "Saver";
-                    }else{
-                      my_fare_type = "Main";
-                    }
-
-
-
-                    newArray.push({
-                      id: i,
-                      name: data[i][0],
-                      group: mygroup,
-                      default: false,
-                      origin_code:data[i][2],
-                      origin_city:this.camelCaseCity(data[i][3]),
-                      destination_code:data[i][4],
-                      destination_city:this.camelCaseCity(data[i][5]),
-                      price:data[i][6],
-                      fare_type: my_fare_type,
-                      fare_class_code:data[i][7],
-                      filed_fare:data[i][8],
-                      taxes:data[i][9],
-                      shortened_region:data[i][10],
-                      round_trip:data[i][12],
-                    });
-                    this.setState({
-                      all_my_fares:newArray
-                    });
-
-
-
-                  }
-
-
-                }
-              }//end of for loop
-
-          }else{
-
-              for(let i = 0; i < data.length; i++){
-
-
-                // console.log("INSIDE THE OTHER FORLOOP")
-
-                if (typeof data[i][0] === 'string' && data[i][0] !== null) {
-
-                  //Checks that the values in index 0 and 2 are airport codes for every row in the spreadsheet
-                  if(typeof data[i][2] == 'string' && (data[i][2].length === 3 && data[i][4].length === 3)){
-                    //console.log(data[i]);
-                    let mygroup = "";
-
-                    if(groupMeByOrigin(data[i][4]) === "ALASKA"){
-                        mygroup = "TO_ALASKA";
-                    }else if(groupMeByOrigin(data[i][2]) === "HAWAII"){
-                        mygroup = "FROM_HAWAII";
-                    }else if(groupMeByOrigin(data[i][4]) === "HAWAII"){
-                        mygroup = "TO_HAWAII";
-                    }else if(groupMeByOrigin(data[i][2]) === "MEXICO" || groupMeByOrigin(data[i][2]) === "COSTA_RICA"){
-                        console.log("THERE SHOULD NOT BE FARES THAT ORIGINATE FROM MEXICO OR COSTA RICA!");
-                    }else if(groupMeByOrigin(data[i][4]) === "MEXICO"){
-                        mygroup = "MEXICO";
-                    }else if(groupMeByOrigin(data[i][4]) === "COSTA_RICA"){
-                        mygroup = "COSTA_RICA";
-                    }else if(groupMeByOrigin(data[i][2]) === "FLORIDA"){
-                        mygroup = "FROM_FLORIDA";
-                    }else if(groupMeByOrigin(data[i][4]) === "FLORIDA"){
-                        mygroup = "TO_FLORIDA";
-                    }else if(groupMeByOrigin(data[i][2]) === "PAE" || groupMeByOrigin(data[i][4]) === "PAE"){
-                        mygroup = "PAE";
-                    }else if(groupMeByOrigin(data[i][4]) === "OTHER_MARKET"){
-                        mygroup = "OTHER_MARKET";
-                    }else{
-                      console.log("NO GROUP WAS FOUND FOR " +data[i][2]+data[i][4]);
-                    }
-
-
-                    //console.log(data[i]);
-                    let newArray = this.state.all_my_fares.slice();
-
-
-
-                      newArray.push({
-                        id: i,
-                        name: data[i][0],
-                        group: mygroup,
-                        default: false,
-                        origin_code:data[i][2],
-                        origin_city:this.camelCaseCity(data[i][3]),
-                        destination_code:data[i][4],
-                        destination_city:this.camelCaseCity(data[i][5]),
-                        price:data[i][6],
-                        fare_type: null,
-                        fare_class_code:null,
-                        taxes:data[i][8],
-                        shortened_region: null,
-                        round_trip:data[i][10],
-                      });
-                      this.setState({
-                        all_my_fares:newArray
-                      });
-
-
-
-
-                  }
-
-
-                }
-
-              }//End of forloop for Award Sale
-
-
-          }
-
-
-
-          let temp_arr = this.state.all_my_fares.slice();
-          temp_arr.sort(compareDestinationCode); //SORT by Destination Code first for alphabetical
-          temp_arr.sort(compareOriginCode); //SORT by Origin Code second for alphabetical
-          temp_arr.sort(comparePrice); //SORT by Price last for lowest to highest fares
-
+        //Get number of Distinct OD from the US Ad Fare Sheet TAB
+        if (data[i].indexOf("Distinct ODs:") > -1) {
           this.setState({
-            all_my_fares:temp_arr
+            number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:") + 1]
           });
+        }
 
 
-          let temp_combined = this.state.combined_saver_and_main.slice();
+        if (typeof data[i][0] === 'string' && data[i][0] !== null) {
 
-          temp_combined = mergeObjects(this.state.all_my_fares);
+          //Checks that the values in index 0 and 2 are airport codes for every row in the spreadsheet
+          if (typeof data[i][2] == 'string' && (data[i][2].length === 3 && data[i][4].length === 3)) {
 
-          this.setState({
-            combined_saver_and_main: temp_combined
-          });
-          
+            let my_fare_type = data[i][11];
 
-        })//end of readXlsxFile for US Ad Fare Sheet
+            let mygroup = "";
+
+            if (groupMeByOrigin(data[i][2]) === "HAWAII") {
+              mygroup = "FROM_HAWAII";
+            } else if (groupMeByOrigin(data[i][4]) === "HAWAII") {
+              mygroup = "TO_HAWAII";
+            } else if (groupMeByOrigin(data[i][2]) === "MEXICO" || groupMeByOrigin(data[i][2]) === "COSTA_RICA") {
+              mygroup = "";
+              console.log("THERE SHOULD NOT BE FARES THAT ORIGINATE FROM MEXICO OR COSTA RICA!");
+            } else if (groupMeByOrigin(data[i][4]) === "MEXICO") {
+              mygroup = "MEXICO";
+            } else if (groupMeByOrigin(data[i][4]) === "COSTA_RICA") {
+              mygroup = "COSTA_RICA";
+            } else if (groupMeByOrigin(data[i][2]) === "FLORIDA") {
+              mygroup = "FROM_FLORIDA";
+            } else if (groupMeByOrigin(data[i][4]) === "FLORIDA") {
+              mygroup = "TO_FLORIDA";
+            } else if (groupMeByOrigin(data[i][2]) === "PAE" || groupMeByOrigin(data[i][4]) === "PAE") {
+              mygroup = "PAE";
+            } else if (groupMeByOrigin(data[i][4]) === "OTHER_MARKET") {
+              mygroup = "OTHER_MARKET";
+            } else {
+              mygroup = "";
+              console.log("NO GROUP WAS FOUND FOR " + data[i][2] + data[i][4]);
+            }
+
+            let newArray = this.state.all_my_fares.slice();
 
 
+            if (my_fare_type === "SAVER") {
+              my_fare_type = "Saver";
+            } else if (my_fare_type === "MAIN") {
+              my_fare_type = "Main";
+            } else {
+              my_fare_type = "Miles";
+            }
 
-    if(this.state.selectedOption === 'Saver'){
-    //Email Marketing Sheet Looper
-      readXlsxFile(file, { sheet: 3 }).then((data) => {
-        //Loops through every row in the sheet
-        let lowest_sea = null;
-        let lowest_pdx = null;
-        let lowest_bay = null;
-        let lowest_la = null;
-        let lowest_no_pdc = null;
-
-
-
-        for(let i = 0; i < data.length; i++){
-
-          //Get Lowest Price Points EMAIL MARKETING
-          if(data[i].indexOf("From:") > -1){
-            // console.log(data[i][data[i].indexOf("From:")]);
-            // console.log(i);
-            lowest_sea = i + 1;
-            lowest_pdx = i + 2;
-            lowest_bay = i + 3;
-            lowest_la = i + 4;
-            lowest_no_pdc =  i + 5;
-            // this.setState({
-            //   number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:")+1]
-            // });
-            //console.log(this.state.number_of_distinct_od);
-          }
-
-          if(i === lowest_sea){
-            // console.log(data[i][9] + "===="+ data[i][10]);
+            newArray.push({
+              id: i,
+              name: data[i][0],
+              group: mygroup,
+              default: false,
+              origin_code: data[i][2],
+              origin_city: this.camelCaseCity(data[i][3]),
+              destination_code: data[i][4],
+              destination_city: this.camelCaseCity(data[i][5]),
+              price: typeof data[i][6] == 'string' ? this.splitAwardFromFee(data[i][6]) : data[i][6],
+              fare_type: my_fare_type,
+              fare_class_code: data[i][7],
+              filed_fare: data[i][8],
+              taxes: data[i][9],
+              shortened_region: data[i][10],
+              round_trip: data[i][12],
+            });
             this.setState({
-              lowest_price_sea: data[i][9]+data[i][10]
-            })
-          }
-          if(i === lowest_pdx){
-            // console.log(data[i][9] + "===="+ data[i][10]);
-            this.setState({
-              lowest_price_pdx: data[i][9]+data[i][10]
-            })
-          }
-          if(i === lowest_bay){
-            // console.log(data[i][9] + "===="+ data[i][10]);
-            this.setState({
-              lowest_price_bay: data[i][9]+data[i][10]
-            })
-          }
-          if(i === lowest_la){
-            // console.log(data[i][9] + "===="+ data[i][10]);
-            this.setState({
-              lowest_price_la: data[i][9]+data[i][10]
-            })
-          }
-          if(i === lowest_no_pdc){
-            // console.log(data[i][9] + "===="+ data[i][10]);
-            this.setState({
-              lowest_price_no_pdc: data[i][9]+data[i][10]
-            })
+              all_my_fares: newArray
+            });
+
           }
 
         }
-
-      })//end of readXlsxFile for US Ad Fare Sheet
-    }else{
-      readXlsxFile(file, { sheet: 5 }).then((data) => {
-        //Loops through every row in the sheet
-        let lowest_sea = null;
-        let lowest_pdx = null;
-        let lowest_bay = null;
-        let lowest_la = null;
-        let lowest_no_pdc = null;
+      }//end of for loop
 
 
+      let temp_arr = this.state.all_my_fares.slice();
+      temp_arr.sort(compareDestinationCode); //SORT by Destination Code first for alphabetical
+      temp_arr.sort(compareOriginCode); //SORT by Origin Code second for alphabetical
+      temp_arr.sort(comparePrice); //SORT by Price last for lowest to highest fares
 
-        for(let i = 0; i < data.length; i++){
-
-          //Get Lowest Price Points EMAIL MARKETING
-          if(data[i].indexOf("From:") > -1){
-            // console.log(data[i][data[i].indexOf("From:")]);
-            // console.log(i);
-            lowest_sea = i + 1;
-            lowest_pdx = i + 2;
-            lowest_bay = i + 3;
-            lowest_la = i + 4;
-            lowest_no_pdc =  i + 5;
-            // this.setState({
-            //   number_of_distinct_od: data[i][data[i].indexOf("Distinct ODs:")+1]
-            // });
-            //console.log(this.state.number_of_distinct_od);
-          }
-
-          if(i === lowest_sea){
-            // console.log(data[i][8] + "===="+ data[i][9]);
-            this.setState({
-              lowest_price_sea: data[i][8]+data[i][9]
-            })
-          }
-          if(i === lowest_pdx){
-            // console.log(data[i][8] + "===="+ data[i][9]);
-            this.setState({
-              lowest_price_pdx: data[i][8]+data[i][9]
-            })
-          }
-          if(i === lowest_bay){
-            // console.log(data[i][8] + "===="+ data[i][9]);
-            this.setState({
-              lowest_price_bay: data[i][8]+data[i][9]
-            })
-          }
-          if(i === lowest_la){
-            // console.log(data[i][8] + "===="+ data[i][9]);
-            this.setState({
-              lowest_price_la: data[i][8]+data[i][9]
-            })
-          }
-          if(i === lowest_no_pdc){
-            // console.log(data[i][8] + "===="+ data[i][9]);
-            this.setState({
-              lowest_price_no_pdc: data[i][8]+data[i][9]
-            })
-          }
-
-        }
-
-      })//end of readXlsxFile for US Ad Fare Sheet / AWARD SALE TYPE
-    }
+      this.setState({
+        all_my_fares: temp_arr
+      });
 
 
-    //Only read AS.com tab if its a saver spreadsheet
-    if(this.state.selectedOption === 'Saver'){
+      let temp_combined = this.state.combined_saver_and_main.slice();
 
-      let  ascom_sheet = 'AS.com';
-      // //AS.com TAB Looper
-      readXlsxFile(file, { sheet: ascom_sheet }).then((data) => {
-        //Loops through every row in the sheet
+      temp_combined = mergeObjects(this.state.all_my_fares);
 
-            for(let i = 0; i < data.length; i++){
+      this.setState({
+        combined_saver_and_main: temp_combined
+      });
 
-              if(data[i][17] !== null && data[i][18] !== null){
-                if(typeof data[i][17] == 'string' && typeof data[i][18] == 'number'){
-                // console.log(data[i][17] + " : " + data[i][18]);
 
-                  this.markAsDefault(data[i][17]);
-                  // this.grabDefaultsFromSheet(data[i][17], data[i][18]);
-                  this.displayData.push(<div className="display-data" style={{fontSize:13, fontWeight:'bold'}}><div className="cityPair" style={{textAlign:'left',marginLeft:80, display:'inline',color:'purple'}}>{data[i][17]}</div><div className="cityPrice" style={{display:'inline',color:'green', marginLeft:120}}>{data[i][18]}</div></div>);
-                  this.setState({
-                    showdata : this.displayData,
-                    postVal : "",
-                    textareaedit: false
-                  });
+    })//end of readXlsxFile for US Ad Fare Sheet
 
-                }
-              }
-
-            }//end of for loop
-
-      })//end of readXlsxFile for Sheet 4
-
-    }
 
   }
 
 
   handleExceptionCodeChange = (idx) => (evt) => {
-    let temp_code = evt.target.value ;
+    let temp_code = evt.target.value;
     temp_code = temp_code.toUpperCase();
-    if(temp_code.length === 6){
+    if (temp_code.length === 6) {
       temp_code = temp_code.match(/.{1,3}/g);
-    }else{
+    } else {
       temp_code = evt.target.value
     }
 
@@ -2314,7 +2184,7 @@ class App extends Component {
       return {
         ...item,
         service_begins: date,
-        begins_string:temp_string,
+        begins_string: temp_string,
       };
     });
 
@@ -2331,7 +2201,7 @@ class App extends Component {
       return {
         ...item,
         service_ends: date,
-        ends_string:temp_string,
+        ends_string: temp_string,
       };
     });
 
@@ -2343,7 +2213,7 @@ class App extends Component {
 
   handleAddException = () => {
     this.setState({
-      exceptions: this.state.exceptions.concat([{ code_origin: '', code_destination: '', travel_valid: '', service_begins: null, service_ends: null, begins_string:'', ends_string:'' }])
+      exceptions: this.state.exceptions.concat([{ code_origin: '', code_destination: '', travel_valid: '', service_begins: null, service_ends: null, begins_string: '', ends_string: '' }])
     });
   }
 
@@ -2357,9 +2227,9 @@ class App extends Component {
 
   resetOutputVariable = () => () => {
 
-   // let newArray = this.state.xmloutput.slice();
+    // let newArray = this.state.finalOutput.slice();
     this.setState({
-      xmloutput:''
+      finalOutput: ''
     });
 
   }
@@ -2420,478 +2290,371 @@ class App extends Component {
 
   render() {
 
+
     return (
       <div className="App">
-      <div className="">
+        <div className="">
 
-        <div className="row col-md-12">
-          {/* <input type = "text" value = {this.state.firstinput} onChange = {this.updateFirstInput} /> */}
+          <div className="row col-md-12">
 
-
-          {/* <CSVDownload data={csvData} filename={"my-file.csv"} target="_blank" /> */}
-
-          <form className="detailsForm"  onSubmit={this.createSaleDetails}>
 
             <div className="form-row sale-information">
-                <div className="row col-md-12">
-                    <div className="form-group col-md-2">
-                      <h3 className="information-headline">Sale Information v3:</h3>
-                    </div>
-                    <div className="form-group col-md-2">
-                      {/* <a href="TEMPLATE.xlsx" download className="btn btn-success download-template">
-                          <i className="fa fa-download"></i> Download Template
-                      </a> */
-                      // https://alaskaair.sharepoint.com/sites/PublishedPricing/Shared%20Documents/Forms/AllItems.aspx?id=%2Fsites%2FPublishedPricing%2FShared%20Documents%2FSales%2FDetail%20and%20Fare%20Dumps
-                      }
-                    </div>
-                    <div className="form-group col-md-2">
-
-                    </div>
-
-                    <div className="form-group col-md-1">
-                        <label className="radio-inline">
-                            <input type="radio" name="sale_type" defaultChecked value="Saver" onChange={() => this.setState({selectedOption: 'Saver'})}/> Saver
-                        </label>
-                    </div>
-                    <div className="form-group col-md-1">
-                        <label className="radio-inline">
-                            <input type="radio" name="sale_type" value="Mileage" onChange={() => this.setState({selectedOption: 'Mileage'})} />
-                            Awards Sale
-                        </label>
-
-                    </div>
-                    <div className="form-group col-md-3">
-                      <input type="file" className="form-control" id="inputFile" onChange={this.onFileChange} />
-                      {/* <div className="form-group-input">
-                        <label className="label">
-                          <i className="material-icons">attach_file</i>
-                          <span className="title">Add File</span>
-                          <input type="file" className="" id="inputFile" onChange={this.onFileChange}/>
-                        </label>
-                      </div> */}
-                    </div>
-                    <div className="form-group col-md-1">
-                        <input type="text" className="form-control" id="sheet_number" onChange={this.changeHiddenSheet} placeholder="" value={this.state.hidden_sheet} style={{marginTop:10}}/>
-                    </div>
 
 
+              <div className="file_select_grid">
+                <div className="file_select_title">
+                  <h3 className="information-headline">Sale Information v3:</h3>
                 </div>
-                <div className="form-group col-md-3">
-                    {/* This row is for Sale Start */}
-                    <div className="row col-md-12">
-                      <label htmlFor="saleStartDate"><strong>Sale Start</strong></label><br />
-                      <DatePicker className="form-control" id="saleStartDate" selected={this.state.sale_start_date} onChange={this.saleStartDateHandler} />
-                    </div>
-                    {/* This row is for Sale End */}
-                    <div className="row col-md-12">
-                      <label htmlFor="saleEndDate"><strong>Purchase By</strong></label>
-                      <DatePicker className="form-control" id="saleEndDate" selected={this.state.sale_end_date} onChange={this.saleEndDateHandler} />
-                    </div>
-                    {/* This row is for Advance Purchase */}
-                    <div className="row col-md-12">
-                      <label htmlFor="advancePurchase"><strong>Advance Purchase</strong></label>
-                      <input type="text" className="form-control" id="advancePurchase" value = {this.state.advance_purchase} onChange = {this.advancePurchaseHandler} />
-                    </div>
-
-
-
-                    <div className="row col-md-12">
-                      <div className="form-group text-area-div">
-                        <label htmlFor="default_markets"><strong>Default Markets:</strong></label>
-
-                        {this.state.textareaedit === true ? (
-                          <textarea className="form-control rounded-0" id="default_markets" rows="6" onChange={this.saveDefaultMarkets} ></textarea>
-                        ): (
-                          <div id="display-data-Container" style={{height:165}}>{this.displayData}</div>
-                        )}
-
-                      </div>
-                    </div>
-
-
-                    {/* This row is for Proposed PAE Dates */}
-                    <div className="row col-md-12">
-
-                      <div className="col-md-12 remove-padding">
-                          <h6 className="proposed-headline"><strong>Proposed Dates:</strong> PAE</h6>
-                      </div>
-                      <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_start_pae} onChange={this.proposedStartDatePAEHandler} />
-                      </div>
-
-                      <div className="col-md-2 text-center">
-                          <h6 className="">to</h6>
-                      </div>
-
-                      <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_end_pae} onChange={this.proposedEndDatePAEHandler} />
-                      </div>
-
-                    </div>
+                <div className="file_select_input">
+                  <input type="file" className="form-control" id="inputFile" onChange={this.onFileChange} />
+                </div>
+                <div className="sheet_number_input">
+                  <input type="text" className="form-control" id="sheet_number" onChange={this.changeHiddenSheet} placeholder="" value={this.state.hidden_sheet} style={{ marginTop: 10 }} />
+                </div>
+              </div>
 
 
 
 
+
+              <div className="date_inputs_grid">
+                {/* This row is for Sale Start */}
+                <div className="sale_start">
+                  <label htmlFor="saleStartDate"><strong>Sale Start</strong></label><br />
+                  <DatePicker className="form-control" id="saleStartDate" selected={this.state.sale_start_date} onChange={this.saleStartDateHandler} />
+                </div>
+                {/* This row is for Sale End */}
+                <div className="purchase_by">
+                  <label htmlFor="saleEndDate"><strong>Purchase By</strong></label>
+                  <DatePicker className="form-control" id="saleEndDate" selected={this.state.sale_end_date} onChange={this.saleEndDateHandler} />
+                </div>
+                {/* This row is for Advance Purchase */}
+                <div className="advance_purchase">
+                  <label htmlFor="advancePurchase"><strong>Advance Purchase</strong></label>
+                  <input type="text" className="form-control" id="advancePurchase" value={this.state.advance_purchase} onChange={this.advancePurchaseHandler} />
+                </div>
+
+                {/* DEFAULT MARKETS */}
+                <div className="default_markets">
+                  <label htmlFor="default_markets"><strong>Default Markets:</strong></label>
+                  {this.state.textareaedit === true ? (
+                    <textarea className="form-control rounded-0" id="default_markets" rows="14" onChange={this.saveDefaultMarkets} ></textarea>
+                  ) : (
+                    <div id="display-data-Container" style={{ height: '100%' }}>{this.displayData}</div>
+                  )}
                 </div>
 
 
-                {/* TRAVEL START INPUTS */}
-                <div className="form-group col-md-3">
-                    {/* This row is for Travel Start: Alaska to/from Hawaii */}
-                    <div className="row col-md-12">
-                      <label htmlFor="travel_start_alaska_to_from_hawaii"><strong>Travel Start:</strong> Alaska to/from Hawaii</label><br />
-                      <DatePicker className="form-control" id="travel_start_alaska_to_from_hawaii" selected={this.state.travel_start_alaska_to_from_hawaii} onChange={this.travelStartAlaskaToFromHawaiiDateHandler} />
-                    </div>
-
-                    {/* This row is for Travel Start: HAWAII */}
-                    <div className="row col-md-12">
-                      <label htmlFor="travel_start_hawaii"><strong>Travel Start:</strong> Hawaii</label><br />
-                      <DatePicker className="form-control" id="travel_start_hawaii" selected={this.state.travel_start_hawaii} onChange={this.travelStartHawaiiHandler} />
-                    </div>
-
-                    {/* This row is for Travel Start: MEXICO */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_start_mexico"><strong>Travel Start:</strong> Mexico</label><br />
-                      <DatePicker className="form-control" id="travel_start_mexico" selected={this.state.travel_start_mexico} onChange={this.travelStartMexicoHandler} />
-                    </div>
-
-                    {/* This row is for Travel Start: COSTA RICA */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_start_costa_rica"><strong>Travel Start:</strong> Costa Rica</label><br />
-                      <DatePicker className="form-control" id="travel_start_costa_rica" selected={this.state.travel_start_costa_rica} onChange={this.travelStartCostaRicaHandler} />
-                    </div>
-
-                    {/* This row is for Travel Start: FLORIDA */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_start_florida"><strong>Travel Start:</strong> Florida</label><br />
-                      <DatePicker className="form-control" id="travel_start_florida" selected={this.state.travel_start_others} readOnly />
-                    </div>
-
-                    {/* This row is for Travel Start: ALL OTHER MARKET */}
-                    <div className="row col-md-12">
-                      <label htmlFor="travel_start_others"><strong>Travel Start:</strong> Other Markets</label><br />
-                      <DatePicker className="form-control" id="travel_start_others" selected={this.state.travel_start_others} onChange={this.travelStartOthersHandler} />
-                    </div>
-
-                    {/* This row is for Proposed Hawaii Dates */}
-                    <div className="row col-md-12">
-
-                      <div className="col-md-12 remove-padding">
-                          <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Hawaii</h6>
-                      </div>
-                      <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_start_hawaii} onChange={this.proposedStartDateHawaiiHandler} />
-                      </div>
-
-                      <div className="col-md-2 text-center">
-                          <h6 className="">to</h6>
-                      </div>
-
-                      <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_end_hawaii} onChange={this.proposedEndDateHawaiiHandler} />
-                      </div>
-
-                    </div>
-
-
+                {/* This row is for Travel Start: Alaska to/from Hawaii */}
+                <div className="travel_start_alaska_to_from_hawaii">
+                  <label htmlFor="travel_start_alaska_to_from_hawaii"><strong>Travel Start:</strong> Alaska to/from Hawaii</label><br />
+                  <DatePicker className="form-control" id="travel_start_alaska_to_from_hawaii" selected={this.state.travel_start_alaska_to_from_hawaii} onChange={this.travelStartAlaskaToFromHawaiiDateHandler} />
+                </div>
+                {/* This row is for Complete Travel By: Alaska to/from Hawaii */}
+                <div className="travel_end_alaska_to_from_hawaii">
+                  <label htmlFor="travel_end_alaska_to_from_hawaii"><strong>Completed Travel By:</strong> Alaska to/from Hawaii</label><br />
+                  <DatePicker className="form-control" id="travel_end_alaska_to_from_hawaii" selected={this.state.travel_end_alaska_to_from_hawaii} onChange={this.travelEndAlaskaToFromHawaiiDateHandler} />
+                </div>
+                {/* This row is for Days Availability: Alaska to/from Hawaii */}
+                <div className="days_availability_alaska_to_from_hawaii">
+                  <label htmlFor="days_availability_alaska_to_from_hawaii"><strong>Days Availability:</strong> Alaska to/from Hawaii</label><br />
+                  <input type="text" className="form-control" id="days_availability_alaska_to_from_hawaii" value={this.state.days_availability_hawaii} readOnly />
                 </div>
 
 
 
-                {/* COMPLETED TRAVEL BY INPUTS */}
-                <div className="form-group col-md-3">
-                    {/* This row is for Complete Travel By: Alaska to/from Hawaii */}
-                    <div className="row col-md-12">
-                      <label htmlFor="travel_end_alaska_to_from_hawaii"><strong>Completed Travel By:</strong> Alaska to/from Hawaii</label><br />
-                      <DatePicker className="form-control" id="travel_end_alaska_to_from_hawaii" selected={this.state.travel_end_alaska_to_from_hawaii} onChange={this.travelEndAlaskaToFromHawaiiDateHandler} />
-                    </div>
-
-                    {/* This row is for Complete Travel By: HAWAII */}
-                    <div className="row col-md-12">
-                      <label htmlFor="travel_end_hawaii"><strong>Completed Travel By:</strong> Hawaii</label><br />
-                      <DatePicker className="form-control" id="travel_end_hawaii" selected={this.state.travel_end_hawaii} onChange={this.travelEndHawaiiHandler} />
-                    </div>
-
-                    {/* This row is for Complete Travel By: MEXICO */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_end_mexico"><strong>Completed Travel By:</strong> Mexico</label><br />
-                      <DatePicker className="form-control" id="travel_end_mexico" selected={this.state.travel_end_mexico} onChange={this.travelEndMexicoHandler} />
-                    </div>
-
-                    {/* This row is for Complete Travel By: COSTA RICA */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_end_costa_rica"><strong>Completed Travel By:</strong> Costa Rica</label><br />
-                      <DatePicker className="form-control" id="travel_end_costa_rica" selected={this.state.travel_end_costa_rica} onChange={this.travelEndCostaRicaHandler} />
-                    </div>
-
-                    {/* This row is for Complete Travel By: FLORIDA */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_end_florida"><strong>Completed Travel By:</strong> Florida</label><br />
-                      <DatePicker className="form-control" id="travel_end_florida" selected={this.state.travel_end_others} readOnly />
-                    </div>
-
-                    {/* This row is for Complete Travel By: ALL OTHER MARKET */}
-                    <div className="row col-md-12">
-                    <label htmlFor="travel_end_others"><strong>Completed Travel By:</strong> Other Markets</label><br />
-                      <DatePicker className="form-control" id="travel_end_others" selected={this.state.travel_end_others} onChange={this.travelEndOthersHandler} />
-                    </div>
-
-
-                    {/* This row is for Proposed Others Dates */}
-                    <div className="row col-md-12">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="proposed-headline"><strong>Proposed Dates:</strong> Others</h6>
-                        </div>
-
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_start_others} onChange={this.proposedStartDateOthersHandler} />
-                        </div>
-
-                        <div className="col-md-2 text-center">
-                          <h6 className="">to</h6>
-                        </div>
-
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.proposed_end_others} onChange={this.proposedEndDateOthersHandler} />
-                        </div>
-                    </div>
-
+                {/* This row is for Travel Start: HAWAII */}
+                <div className="travel_start_hawaii">
+                  <label htmlFor="travel_start_hawaii"><strong>Travel Start:</strong> Hawaii</label><br />
+                  <DatePicker className="form-control" id="travel_start_hawaii" selected={this.state.travel_start_hawaii} onChange={this.travelStartHawaiiHandler} />
+                </div>
+                {/* This row is for Complete Travel By: HAWAII */}
+                <div className="travel_end_hawaii">
+                  <label htmlFor="travel_end_hawaii"><strong>Completed Travel By:</strong> Hawaii</label><br />
+                  <DatePicker className="form-control" id="travel_end_hawaii" selected={this.state.travel_end_hawaii} onChange={this.travelEndHawaiiHandler} />
+                </div>
+                {/* This row is for Days Availability: HAWAII */}
+                <div className="days_availability_hawaii">
+                  <label htmlFor="days_availability_hawaii"><strong>Days Availability:</strong> Hawaii</label><br />
+                  <input type="text" className="form-control" id="days_availability_hawaii" value={this.state.days_availability_hawaii} onChange={this.daysAvailabilityHawaiiHandler} />
                 </div>
 
 
 
-                {/* DAY/TIME AVAILABILITY INPUTS */}
-                <div className="form-group col-md-3">
-                    {/* This row is for Days Availability: Alaska to/from Hawaii */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_alaska_to_from_hawaii"><strong>Days Availability:</strong> Alaska to/from Hawaii</label><br />
-                      <input type="text" className="form-control" id="days_availability_alaska_to_from_hawaii" value = {this.state.days_availability_hawaii} readOnly />
-                    </div>
 
-                    {/* This row is for Days Availability: HAWAII */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_hawaii"><strong>Days Availability:</strong> Hawaii</label><br />
-                      <input type="text" className="form-control" id="days_availability_hawaii" value = {this.state.days_availability_hawaii} onChange={this.daysAvailabilityHawaiiHandler} />
-                    </div>
-
-                    {/* This row is for Days Availability: MEXICO */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_mexico"><strong>Days Availability:</strong> Mexico</label><br />
-                      <input type="text" className="form-control" id="days_availability_mexico" value = {this.state.days_availability_mexico} onChange={this.daysAvailabilityMexicoHandler} />
-                    </div>
-
-                    {/* This row is for Days Availability: COSTA RICA */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_costa_rica"><strong>Days Availability:</strong> Costa Rica</label><br />
-                      <input type="text" className="form-control" id="days_availability_costa_rica" value = {this.state.days_availability_costa_rica} onChange={this.daysAvailabilityCostaRicaHandler} />
-                    </div>
-
-                    {/* This row is for Days Availability: TO FLORIDA */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_to_florida"><strong>Days Availability:</strong> To Florida</label><br />
-                      <input type="text" className="form-control" id="days_availability_to_florida" value = {this.state.days_availability_to_florida} onChange={this.daysAvailabilityToFloridaHandler}/>
-                    </div>
-
-                    {/* This row is for Days Availability: FROM FLORIDA */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_from_florida"><strong>Days Availability:</strong> From Florida</label><br />
-                      <input type="text" className="form-control" id="days_availability_from_florida" value = {this.state.days_availability_from_florida} onChange={this.daysAvailabilityFromFloridaHandler} />
-                    </div>
-
-                    {/* This row is for Days Availability: ALL OTHER MARKET */}
-                    <div className="row col-md-12">
-                      <label htmlFor="days_availability_others"><strong>Days Availability:</strong> Other Markets</label><br />
-                      <input type="text" className="form-control" id="days_availability_others" value = {this.state.days_availability_others} onChange={this.daysAvailabilityOthersHandler} />
-                    </div>
+                {/* This row is for Travel Start: MEXICO */}
+                <div className="travel_start_mexico">
+                  <label htmlFor="travel_start_mexico"><strong>Travel Start:</strong> Mexico</label><br />
+                  <DatePicker className="form-control" id="travel_start_mexico" selected={this.state.travel_start_mexico} onChange={this.travelStartMexicoHandler} />
                 </div>
+                {/* This row is for Complete Travel By: MEXICO */}
+                <div className="travel_end_mexico">
+                  <label htmlFor="travel_end_mexico"><strong>Completed Travel By:</strong> Mexico</label><br />
+                  <DatePicker className="form-control" id="travel_end_mexico" selected={this.state.travel_end_mexico} onChange={this.travelEndMexicoHandler} />
+                </div>
+                {/* This row is for Days Availability: MEXICO */}
+                <div className="days_availability_mexico">
+                  <label htmlFor="days_availability_mexico"><strong>Days Availability:</strong> Mexico</label><br />
+                  <input type="text" className="form-control" id="days_availability_mexico" value={this.state.days_availability_mexico} onChange={this.daysAvailabilityMexicoHandler} />
+                </div>
+
+
+
+
+                {/* This row is for Travel Start: COSTA RICA */}
+                <div className="travel_start_costa_rica">
+                  <label htmlFor="travel_start_costa_rica"><strong>Travel Start:</strong> Costa Rica</label><br />
+                  <DatePicker className="form-control" id="travel_start_costa_rica" selected={this.state.travel_start_costa_rica} onChange={this.travelStartCostaRicaHandler} />
+                </div>
+                {/* This row is for Complete Travel By: COSTA RICA */}
+                <div className="travel_end_costa_rica">
+                  <label htmlFor="travel_end_costa_rica"><strong>Completed Travel By:</strong> Costa Rica</label><br />
+                  <DatePicker className="form-control" id="travel_end_costa_rica" selected={this.state.travel_end_costa_rica} onChange={this.travelEndCostaRicaHandler} />
+                </div>
+                {/* This row is for Days Availability: COSTA RICA */}
+                <div className="days_availability_costa_rica">
+                  <label htmlFor="days_availability_costa_rica"><strong>Days Availability:</strong> Costa Rica</label><br />
+                  <input type="text" className="form-control" id="days_availability_costa_rica" value={this.state.days_availability_costa_rica} onChange={this.daysAvailabilityCostaRicaHandler} />
+                </div>
+
+
+
+
+                {/* This row is for Travel Start: FLORIDA */}
+                <div className="travel_start_florida">
+                  <label htmlFor="travel_start_florida"><strong>Travel Start:</strong> Florida</label><br />
+                  <DatePicker className="form-control" id="travel_start_florida" selected={this.state.travel_start_others} readOnly />
+                </div>
+                {/* This row is for Complete Travel By: FLORIDA */}
+                <div className="travel_end_florida">
+                  <label htmlFor="travel_end_florida"><strong>Completed Travel By:</strong> Florida</label><br />
+                  <DatePicker className="form-control" id="travel_end_florida" selected={this.state.travel_end_others} readOnly />
+                </div>
+                {/* This row is for Days Availability: TO FLORIDA */}
+                <div className="days_availability_to_florida">
+                  <label htmlFor="days_availability_to_florida"><strong>Days Availability:</strong> To Florida</label><br />
+                  <input type="text" className="form-control" id="days_availability_to_florida" value={this.state.days_availability_to_florida} onChange={this.daysAvailabilityToFloridaHandler} />
+                </div>
+                {/* This row is for Days Availability: FROM FLORIDA */}
+                <div className="days_availability_from_florida">
+                  <label htmlFor="days_availability_from_florida"><strong>Days Availability:</strong> From Florida</label><br />
+                  <input type="text" className="form-control" id="days_availability_from_florida" value={this.state.days_availability_from_florida} onChange={this.daysAvailabilityFromFloridaHandler} />
+                </div>
+
+
+
+
+                {/* This row is for Travel Start: ALL OTHER MARKET */}
+                <div className="travel_start_others">
+                  <label htmlFor="travel_start_others"><strong>Travel Start:</strong> Other Markets</label><br />
+                  <DatePicker className="form-control" id="travel_start_others" selected={this.state.travel_start_others} onChange={this.travelStartOthersHandler} />
+                </div>
+                {/* This row is for Complete Travel By: ALL OTHER MARKET */}
+                <div className="travel_end_others">
+                  <label htmlFor="travel_end_others"><strong>Completed Travel By:</strong> Other Markets</label><br />
+                  <DatePicker className="form-control" id="travel_end_others" selected={this.state.travel_end_others} onChange={this.travelEndOthersHandler} />
+                </div>
+                {/* This row is for Days Availability: ALL OTHER MARKET */}
+                <div className="days_availability_others">
+                  <label htmlFor="days_availability_others"><strong>Days Availability:</strong> Other Markets</label><br />
+                  <input type="text" className="form-control" id="days_availability_others" value={this.state.days_availability_others} onChange={this.daysAvailabilityOthersHandler} />
+                </div>
+
+              </div>
+
+
+              {/* This row is for Proposed PAE Dates */}
+              <div className="proposed_dates_pae">
+                <div className="proposed_dates_pae_start">
+                  <label htmlFor=""><strong>Proposed Start Date:</strong> PAE</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_start_pae} onChange={this.proposedStartDatePAEHandler} />
+                </div>
+                <div className="proposed_dates_pae_end">
+                  <label htmlFor=""><strong>Proposed End Date:</strong> PAE</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_end_pae} onChange={this.proposedEndDatePAEHandler} />
+                </div>
+              </div>
+
+              {/* This row is for Proposed Hawaii Dates */}
+              <div className="proposed_dates_hawaii">
+                <div className="proposed_dates_hawaii_start">
+                  <label htmlFor=""><strong>Proposed Start Date:</strong> HAWAII</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_start_hawaii} onChange={this.proposedStartDateHawaiiHandler} />
+                </div>
+                <div className="proposed_dates_hawaii_end">
+                  <label htmlFor=""><strong>Proposed End Date:</strong> HAWAII</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_end_hawaii} onChange={this.proposedEndDateHawaiiHandler} />
+                </div>
+              </div>
+
+
+
+              {/* This row is for Proposed Others Dates */}
+              <div className="proposed_dates_others">
+                <div className="proposed_dates_others_start">
+                  <label htmlFor=""><strong>Proposed Start Date:</strong> OTHERS</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_start_others} onChange={this.proposedStartDateOthersHandler} />
+                </div>
+                <div className="proposed_dates_others_end">
+                  <label htmlFor=""><strong>Proposed End Date:</strong> OTHERS</label><br />
+                  <DatePicker className="form-control" selected={this.state.proposed_end_others} onChange={this.proposedEndDateOthersHandler} />
+                </div>
+              </div>
+
+
+
+
+
               {/* End of 1st Form ROW */}
+            </div>
+
+
+
+
+            {/* Blackout Information ROW */}
+            <div className="form-row blackout-information">
+              <div className="row col-md-12">
+                <h3 className="information-headline">Blackouts:</h3>
               </div>
-
-
-
-
-              {/* Blackout Information ROW */}
-              <div className="form-row blackout-information">
-                  <div className="row col-md-12">
-                      <h3 className="information-headline">Blackouts:</h3>
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Alaska to/from Hawaii</h6>
                   </div>
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Alaska to/from Hawaii</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_alaska_to_from_hawaii} onChange={this.blackoutStartDateAlaskaToFromHawaiiHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_alaska_to_from_hawaii} onChange={this.blackoutEndDateAlaskaToFromHawaiiHandler} />
-                        </div>
-                      </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_alaska_to_from_hawaii} onChange={this.blackoutStartDateAlaskaToFromHawaiiHandler} />
                   </div>
-
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> To Hawaii</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_to_hawaii} onChange={this.blackoutStartDateToHawaiiHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_to_hawaii} onChange={this.blackoutEndDateToHawaiiHandler} />
-                        </div>
-                      </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
                   </div>
-
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> From Hawaii</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_from_hawaii} onChange={this.blackoutStartDateFromHawaiiHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_from_hawaii} onChange={this.blackoutEndDateFromHawaiiHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Mexico</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_mexico} onChange={this.blackoutStartDateMexicoHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_mexico} onChange={this.blackoutEndDateMexicoHandler} />
-                        </div>
-                      </div>
-                  </div>
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Costa Rica</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_costa_rica} onChange={this.blackoutStartDateCostaRicaHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_costa_rica} onChange={this.blackoutEndDateCostaRicaHandler} />
-                        </div>
-                      </div>
-                  </div>
-                  <div className="form-group col-md-4">
-                      <div className="row col-md-12 individual-blackout">
-                        <div className="col-md-12 remove-padding">
-                          <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Other Markets</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                        <DatePicker className="form-control" selected={this.state.blackout_start_others} onChange={this.blackoutStartDateOthersHandler} />
-                        </div>
-                        <div className="col-md-2 text-center">
-                          <h6 className="black-color">to</h6>
-                        </div>
-                        <div className="col-md-5 remove-padding">
-                          <DatePicker className="form-control" selected={this.state.blackout_end_others} onChange={this.blackoutEndDateOthersHandler} />
-                        </div>
-                      </div>
-                  </div>
-
-              </div>
-
-
-              <div className="form-row sale-information">
-                <div className="row col-md-12">
-                  <div className="">
-                      <h3 className="information-headline">Exceptions:</h3>
-                  </div>
-                  <div className="form-group col-md-2 add-btn">
-                    <button type="button" className="btn btn-success add-exception" onClick={this.handleAddException}>
-                          <i className="fa fa-plus"></i> Add Exception
-                      </button>
-                  </div>
-                </div>
-
-
-                {this.state.exceptions.map((item, idx) => (
-                  <div key={idx} className="row col-md-12 individual-exception">
-                    <div className="form-group col-md-2">
-                      <label htmlFor={`code_input_box_${idx + 1}`}><strong>Code Pair:</strong></label>
-                      <input type="text" className="form-control" id={`code_input_box_${idx + 1}`}  placeholder={`#${idx + 1}`} value={item.code} onChange={this.handleExceptionCodeChange(idx)} />
-                    </div>
-                    <div className="form-group col-md-5">
-                      <label htmlFor={`travel_valid_input_box_${idx + 1}`}><strong>Travel Valid:</strong></label>
-                      <input type="text" className="form-control" id={`travel_valid_input_box_${idx + 1}`} placeholder={`Saturdays only`} value={item.travel_valid} onChange={this.handleExceptionTravelValid(idx)} />
-                    </div>
-                    <div className="form-group col-md-2">
-                      <label htmlFor={`service_begins_datepicker_${idx + 1}`}><strong>Service Begins:</strong></label>
-                      <DatePicker className="form-control" id={`service_begins_datepicker_${idx + 1}`} selected={item.service_begins} onChange={this.handleExceptionServiceBegins(idx)} />
-                    </div>
-                    <div className="form-group col-md-2">
-                    <label htmlFor={`service_ends_datepicker_${idx + 1}`}><strong>Service Ends:</strong></label>
-                      <DatePicker className="form-control" id={`service_ends_datepicker_${idx + 1}`} selected={item.service_ends} onChange={this.handleExceptionServiceEnds(idx)} />
-                    </div>
-
-                    {/* <button type="button" onClick={this.handleRemoveException(idx)} className="small">-</button> */}
-                    <div className="form-group col-md-1">
-                      <button type="button" className="btn btn-danger remove-exception"  onClick={this.handleRemoveException(idx)}>
-                          <i className="fa fa-minus"></i>
-                      </button>
-                    </div>
-                  </div>
-                ))}
-
-              </div>
-
-              <div className="form-row sale-information">
-                {/* <div className="row col-md-12">
-                  <div className="form-group col-md-6">
-                    <label htmlFor="inputPassword4">First Input</label>
-                    <input type="text" className="form-control" id="inputAddress" value = {this.state.firstinput} onChange = {this.updateFirstInput} />
-                  </div>
-                  <div className="form-group col-md-6">
-                    <div className="form-check">
-                      <input className="form-check-input" type="checkbox" id="gridCheck" />
-                      <label className="form-check-label" htmlFor="gridCheck">Check me out</label>
-                    </div>
-                  </div>
-                </div> */}
-                <div className="row col-md-12">
-                  <div className="form-group col-md-9">
-                    <button style={{marginTop:'15px'}} type="submit" className="form-control btn btn-primary" id="generate-xml" >Generate XML</button>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_alaska_to_from_hawaii} onChange={this.blackoutEndDateAlaskaToFromHawaiiHandler} />
                   </div>
                 </div>
               </div>
-            </form>
+
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> To Hawaii</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_to_hawaii} onChange={this.blackoutStartDateToHawaiiHandler} />
+                  </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_to_hawaii} onChange={this.blackoutEndDateToHawaiiHandler} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> From Hawaii</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_from_hawaii} onChange={this.blackoutStartDateFromHawaiiHandler} />
+                  </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_from_hawaii} onChange={this.blackoutEndDateFromHawaiiHandler} />
+                  </div>
+                </div>
+              </div>
+
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Mexico</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_mexico} onChange={this.blackoutStartDateMexicoHandler} />
+                  </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_mexico} onChange={this.blackoutEndDateMexicoHandler} />
+                  </div>
+                </div>
+              </div>
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Costa Rica</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_costa_rica} onChange={this.blackoutStartDateCostaRicaHandler} />
+                  </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_costa_rica} onChange={this.blackoutEndDateCostaRicaHandler} />
+                  </div>
+                </div>
+              </div>
+              <div className="form-group col-md-4">
+                <div className="row col-md-12 individual-blackout">
+                  <div className="col-md-12 remove-padding">
+                    <h6 className="blackout-headline black-color"><strong>Blackout Dates:</strong> Other Markets</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_start_others} onChange={this.blackoutStartDateOthersHandler} />
+                  </div>
+                  <div className="col-md-2 text-center">
+                    <h6 className="black-color">to</h6>
+                  </div>
+                  <div className="col-md-5 remove-padding">
+                    <DatePicker className="form-control" selected={this.state.blackout_end_others} onChange={this.blackoutEndDateOthersHandler} />
+                  </div>
+                </div>
+              </div>
+
+            </div>
+
+
+            {/* GENERATE BUTTONS */}
+            <div className="sale_information">
+              <div className="generateXml">
+                {
+                  this.state.isDisabled ? (
+                    <button type="submit" disabled className="generate_xml disabled" onClick={this.createMyXmlHandler}>Generate <span>XML</span></button>
+                  ) : (
+                    <button type="submit" className="generate_xml enabled" onClick={this.createMyXmlHandler}>Generate <span>XML</span></button>
+                  )
+                }
+
+              </div>
+              <div className="generateJson">
+                {
+                  this.state.isDisabled ? (
+                    <button type="submit" disabled className="generate_json disabled" onClick={this.createMyJSONHandler}>Generate <span>JSON</span></button>
+                  ) : (
+                    <button type="submit" className="generate_json enabled" onClick={this.createMyJSONHandler}>Generate <span>JSON</span></button>
+                  )
+                }
+
+              </div>
+            </div>
+
+
 
             {/* XML OUTPUT LAYER */}
             <div className="form-row output-information">
               <div className="row col-md-12">
                 <div className="col-lg-10 col-md-8 col-sm-6">
-                    <h3 className="">Output:</h3>
+                  <h3 className="information-headline">Output:</h3>
                 </div>
                 <div className="form-group col-lg-1 col-md-2 col-sm-3">
-                  <CopyToClipboard text={this.state.xmloutput}
-                  onCopy={() => this.setState({copied: true})}>
-                  <button type="submit" className="btn btn-success copy-to-clipboard"> <i className="fa fa-copy"></i> Clipboard</button>
+                  <CopyToClipboard text={this.state.finalOutput}
+                    onCopy={() => this.setState({ copied: true })}>
+                    <button type="submit" className="btn btn-success copy-to-clipboard"> <i className="fa fa-copy"></i> Clipboard</button>
                   </CopyToClipboard>
                 </div>
                 <div className="form-group col-lg-1 col-md-2 col-sm-3">
@@ -2902,21 +2665,21 @@ class App extends Component {
               <div className="row col-md-12">
                 <div className="form-group col-md-12">
 
-                    <pre id="pre-xml-output">
-                          {this.state.xmloutput}
-                    </pre>
+                  {/* <pre id="pre-xml-output">
+                    {this.state.finalOutput}
+                  </pre> */}
+
+                  <pre id="pre-xml-output">{this.state.finalOutput}</pre>
                 </div>
               </div>
             </div>
 
 
-        </div>
+          </div>
 
-      </div>
+        </div>
       </div>
     );
-
-
 
   }
 
